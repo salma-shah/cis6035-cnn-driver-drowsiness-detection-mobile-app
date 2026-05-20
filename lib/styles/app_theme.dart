@@ -5,6 +5,8 @@ class AppTheme
 {
   // light theme for now, can add dark theme later
   static ThemeData lightTheme = ThemeData(
+  fontFamily: 'Montserrat',
+
    brightness: Brightness.light,
    colorScheme: ColorScheme.light(
    primary: AppColours.primary, 
