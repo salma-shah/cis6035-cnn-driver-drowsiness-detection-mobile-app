@@ -19,11 +19,13 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 300,
+      width: 240,
       child: TextField(
+        style: const TextStyle(
+          fontSize: 14,
+        ),
         controller: controller,
         obscureText: obscureText,
-      
         decoration: InputDecoration(
           hintText: hintText,
       
