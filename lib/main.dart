@@ -1,67 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
 import 'package:sleepy_driver/styles/app_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:sleepy_driver/firebase_options.dart';
+import 'package:sleepy_driver/routing/routes.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp
+  (
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AuthBloc()),
+      ],
+      child: MyApp(),
+    ));
 }
 
+// landing page for app
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
+
+  final _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
-   return MaterialApp(
+   return MaterialApp.router(
     debugShowCheckedModeBanner: false,
     title: 'SleepyDriver Landing Page',
     theme: AppTheme.lightTheme,
-    home: LandingPage(),
+    routerConfig: _appRouter.router,
    );
   }
-  
-}
-
-class LandingPage extends StatelessWidget {
-  const LandingPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 100), 
-              _buildHeader(context), 
-              _buildBody()       
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-Widget _buildHeader(BuildContext context) {
-  return Container(
-    alignment: Alignment.center,
-        child: Text(
-          'SleepyDriver',
-          style: TextStyle(
-            fontSize: 42,
-            fontWeight: FontWeight.bold,
-          //  fontFamily: 'Montserrat',
-            color: Theme.of(context).primaryColor
-          ),
-        ),
-  );
-}
-
-Widget _buildBody() {
-   return Expanded(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child:
-              Image.asset('assets/images/img_landing_pg.jpg', 
-              width: double.infinity, fit: BoxFit.cover),    
-          ),
-        );
 }

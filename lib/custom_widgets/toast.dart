@@ -19,22 +19,22 @@ class CustomToast {
     overlayEntry = OverlayEntry(
       builder: (context) {
         return Positioned(
-          bottom: 80,
-          left: 20,
-          right: 20,
+          bottom: 60,
+          left: 10,
+          right: 10,
 
           child: Material(
             color: Colors.transparent,
             child: AnimatedContainer(
               duration:
                   const Duration(
-                milliseconds: 300,
+                milliseconds: 3000,
               ),
 
               padding:
                 const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 14,
+                horizontal: 14,
+                vertical: 10,
               ),
 
               decoration: BoxDecoration(
