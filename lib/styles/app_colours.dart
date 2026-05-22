@@ -18,6 +18,8 @@ class AppColours
   
   // custom colours
   static const danger = Color(0xFFD20004);
-  static const success = Color.fromARGB(255, 94, 161, 97);
+
+  static const error = Color(0xFFe74c3c);
+  static const success = Color(0xFF28a745);
 
 }

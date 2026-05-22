@@ -1,6 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sleepy_driver/routing/route_constants.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -18,7 +19,7 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
     _timer = Timer(const Duration(seconds: 3), () {
       // navigating to the next page after the timer ends
-      Navigator.pushReplacementNamed(context, '/login');
+      context.pushNamed(RouteConstants.login);
     });
   }
 
