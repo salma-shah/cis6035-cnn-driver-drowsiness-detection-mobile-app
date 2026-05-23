@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sleepy_driver/auth/models/user.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class AuthService {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -35,28 +38,72 @@ class AuthService {
     return completer.future;
   }
 
-  // verifies OTP and signs in
-  Future<UserModel?> verifyOtp(String verificationId, String otp) async {
+  // verifies OTP 
+  Future<UserModel> verifyOtp(String verificationId, String otp, String? name) async {
     final PhoneAuthCredential credential = PhoneAuthProvider.credential(
       verificationId: verificationId,
       smsCode: otp,
     );
 
     UserCredential userCredential = await firebaseAuth.signInWithCredential(credential);
-   final firebaseUser =
-      userCredential.user;
+    final firebaseUser = userCredential.user;
+    if (firebaseUser == null ){ throw Exception('Verification failed');}
+    final userRef = FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid);
+    final userDoc = await userRef.get();
 
-  if (firebaseUser == null) {
-    return null;
-  }
+    if (!userDoc.exists)
+    {
+      final user = UserModel(
+        userId: firebaseUser.uid,
+        phoneNumber: firebaseUser.phoneNumber,
+        name: name?.trim().isNotEmpty == true ? name!.trim() : 'New User'
+      );
 
-  UserModel user = UserModel(
-    userId: firebaseUser.uid,
-    name: firebaseUser.displayName ?? '',
-    email: firebaseUser.phoneNumber ?? '',
+      await userRef.set(user.toMap());
+      return user;
+    }
+
+     return UserModel.fromMap(
+    userDoc.data()!,
   );
-  return user;
   }
+
+// getting current user
+ Future<UserModel?> getCurrentUser(String uid) async {
+    final firebaseUser = firebaseAuth.currentUser;
+
+    if (firebaseUser == null) {
+      return null;
+    }
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
+
+    if (!doc.exists) {
+      return null;
+    }
+
+    return UserModel.fromMap(doc.data()!);
+  }
+  
+  String formatPhone1(String phone) {
+  if (phone.startsWith('0')) {
+    return phone.replaceFirst('0', '+94');
+  }
+  return phone;
+  }
+
+Future<bool> phoneExists(String phone) async {
+  String formatPhone = phone.trim();
+  log('Phone number passed: $phone');
+  log('Formatted phone: $formatPhone');
+  final result = await FirebaseFunctions.instance.httpsCallable('checkIfPhoneNumberIsRegistered')
+      .call({'phone': phone.trim()});
+  log('Phone number passed: $formatPhone');
+  return result.data['exists'] == true;
+}
 
   // log out
   Future<void> logOut() async {
@@ -64,125 +111,62 @@ class AuthService {
   }
 
   // update name 
-  Future<void> updateName(String name) async {
-    User? user = currentUser;
-    if (user != null) {
-      await user.updateDisplayName(name);
-      await user.reload();
-    }
-  }
-
-  // update phone number
-  // Future<void> updatePhoneNumber(String phoneNumber) async {
+  // Future<void> updateName(String name) async {
   //   User? user = currentUser;
   //   if (user != null) {
-  //     await signInWithPhone(phoneNumber, (verificationId) async {
-  //       // Handle OTP verification and update phone number
-  //       // This is a placeholder for the actual OTP verification process
-  //       // You would need to implement the logic to verify the OTP and update the phone number
-  //     });
+  //     await user.updateDisplayName(name);
+  //     await user.reload();
   //   }
   // }
 
-  // delete account
-  Future<void> deleteUserAccount() async {
-  try {
-  await FirebaseAuth.instance.currentUser!.delete();
+  // // update phone number
+  // // Future<void> updatePhoneNumber(String phoneNumber) async {
+  // //   User? user = currentUser;
+  // //   if (user != null) {
+  // //     await signInWithPhone(phoneNumber, (verificationId) async {
+  // //       // Handle OTP verification and update phone number
+  // //       // This is a placeholder for the actual OTP verification process
+  // //       // You would need to implement the logic to verify the OTP and update the phone number
+  // //     });
+  // //   }
+  // // }
 
-  } on FirebaseAuthException catch (e) {
-    //log.e(e);
+  // // delete account
+  // Future<void> deleteUserAccount() async {
+//   try {
+//   await FirebaseAuth.instance.currentUser!.delete();
 
-    if (e.code == "requires-recent-login") {
-      await _reauthenticateAndDelete();
-    } else {
-      // Handle other Firebase exceptions
-    }
-  } catch (e) {
-   // log.e(e);
+//   } on FirebaseAuthException catch (e) {
+//     //log.e(e);
 
-    // Handle general exception
-  }
-}
+//     if (e.code == "requires-recent-login") {
+//       await _reauthenticateAndDelete();
+//     } else {
+//       // Handle other Firebase exceptions
+//     }
+//   } catch (e) {
+//    // log.e(e);
 
-  Future<void> _reauthenticateAndDelete() async {
-  try {
-    final providerData = firebaseAuth.currentUser?.providerData.first;
+//     // Handle general exception
+//   }
+// }
 
-    if (AppleAuthProvider().providerId == providerData!.providerId) {
-      await firebaseAuth.currentUser!
-          .reauthenticateWithProvider(AppleAuthProvider());
-    } else if (GoogleAuthProvider().providerId == providerData.providerId) {
-      await firebaseAuth.currentUser!
-          .reauthenticateWithProvider(GoogleAuthProvider());
-    }
+//   Future<void> _reauthenticateAndDelete() async {
+//   try {
+//     final providerData = firebaseAuth.currentUser?.providerData.first;
 
-    await firebaseAuth.currentUser?.delete();
-  } catch (e) {
-    // Handle exceptions
-  }
-}
- 
+//     if (AppleAuthProvider().providerId == providerData!.providerId) {
+//       await firebaseAuth.currentUser!
+//           .reauthenticateWithProvider(AppleAuthProvider());
+//     } else if (GoogleAuthProvider().providerId == providerData.providerId) {
+//       await firebaseAuth.currentUser!
+//           .reauthenticateWithProvider(GoogleAuthProvider());
+//     }
 
- // sign in with email ans password
- Future<UserModel?> signUp(String email, String password, String name) async {
-   try {
-     UserCredential userCredential = await firebaseAuth.createUserWithEmailAndPassword(
-       email: email,
-       password: password,
-     );
-     final firebaseUser = userCredential.user;
-
-     if (firebaseUser == null) {
-       return null;
-     }
-
-     // updating firebase user name
-     await firebaseUser.updateDisplayName(name);
-
-     UserModel user = UserModel(
-       userId: firebaseUser.uid,
-       name: name,
-       email: firebaseUser.email ?? '',
-     );
-     return user;
-   } on FirebaseAuthException catch (e) {
-     // Handle authentication errors
-     throw Exception(e.message);
-   }
- }
-
- // login
- Future<UserModel?> login({
-
-    required String email,
-    required String password,
-
-  }) async {
-
-    UserCredential userCredential =
-        await firebaseAuth
-            .signInWithEmailAndPassword(
-
-      email: email,
-      password: password,
-    );
-    final firebaseUser = userCredential.user;
-
-    if (firebaseUser == null) {
-      return null;
-    }
-
-    UserModel user = UserModel(
-      userId: firebaseUser.uid,
-      name: firebaseUser.displayName ?? '',
-      email: firebaseUser.email ?? ''
-    );
-    return user;
-  }
-
-  Future<void> logout() async {
-
-    await firebaseAuth.signOut();
-  }
+//     await firebaseAuth.currentUser?.delete();
+//   } catch (e) {
+//     // Handle exceptions
+//   }
+// }
 
 }

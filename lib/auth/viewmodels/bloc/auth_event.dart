@@ -31,8 +31,9 @@ class UserLoggedInEvent extends AuthEvent {
 
 class OtpSentEvent extends AuthEvent {
   final String phoneNumber;
+  final bool isSignUp;
 
-  const OtpSentEvent({required this.phoneNumber});
+  const OtpSentEvent({required this.phoneNumber, required this.isSignUp});
 
   @override
   List<Object> get props => [phoneNumber];
@@ -41,38 +42,10 @@ class OtpSentEvent extends AuthEvent {
 class OtpVerifiedEvent extends AuthEvent {
   final String verificationId;
   final String otp;
+  final String? name;
 
-  const OtpVerifiedEvent({required this.verificationId, required this.otp});
+  const OtpVerifiedEvent({required this.verificationId, required this.otp, required this.name});
 
   @override
   List<Object> get props => [verificationId, otp];
 }
-
-// signed up with email and password
-// class UserSignedUpWithEmailEvent extends AuthEvent {
-
-//   final String email;
-//   final String password;
-//   final String name;
-
-//   const UserSignedUpWithEmailEvent({
-
-//     required this.email,
-//     required this.password,
-//     required this.name,
-//   });
-// }
-
-// login 
-// class UserLoggedInEvent
-//     extends AuthEvent {
-
-//   final String email;
-//   final String password;
-
-//   const UserLoggedInEvent({
-
-//     required this.email,
-//     required this.password,
-//   });
-// }

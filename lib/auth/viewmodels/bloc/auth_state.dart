@@ -15,7 +15,7 @@ final class AuthLoadingState extends AuthState {
 
 final class AuthSuccessState extends AuthState {
   final UserModel user;
-  const AuthSuccessState({required this.user});
+  const AuthSuccessState(this.user);
 
   @override
   List<Object> get props => [user];   // if user is authenticated, user will be used as a prop
@@ -33,12 +33,4 @@ final class AuthErrorState extends AuthState {
   final class OtpCodeSentState extends AuthState {
   final String verificationId;
   const OtpCodeSentState({required this.verificationId});
-  }
-
-  // auth success general msg state
-   final class AuthSucessMsgState extends AuthState {
-    final String successMessage;
-    const AuthSucessMsgState({required this.successMessage});
-
-    List<Object> get props => [successMessage];
   }

@@ -14,32 +14,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthService authService = AuthService();
   AuthBloc() : super(AuthInitialState()) {
     on<AuthEvent>((event, emit) {});
-      
-      // when signng up the user
-      on<UserSignedUpEvent>((event, emit) async {
-        emit(AuthLoadingState(isLoading: true));
-        try 
-        {
-         final UserModel? user = await authService.signUp(
-            event.phoneNumber,
-            event.name,
-            event.onCodeSent as String,
-          );
-          if (user != null) {
-            emit(AuthSuccessState(user: user));
-          } else {
-            emit(AuthErrorState(errorMessage: 'Failed to sign up user'));
-          }
-        }
-          catch (e) { log('Error signing in with phone number: $e');
-          }
-  });
 
      on<OtpSentEvent>((event, emit) async {
       // log("EVENT WAS RECEIVED");
       emit(AuthLoadingState(isLoading: true));
       try {
-        final verificationId =
+        // checking if phone exists
+        final exists = await authService.phoneExists(event.phoneNumber);
+        if (exists && event.isSignUp)
+        {
+          emit(AuthErrorState(errorMessage: 'This phone number is already registered'));
+          return;
+        }
+        if (!exists && !event.isSignUp)
+        {
+          emit(AuthErrorState(errorMessage: 'No account found for this phone number.'));
+          return;
+        }
+
+      final verificationId =
       await authService.sendOtp(
       event.phoneNumber);
       
@@ -49,7 +42,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         verificationId: verificationId,
       ),
       );
-      emit(AuthSucessMsgState(successMessage: 'OTP sent successfully'));
       } catch (e) {
         log('Error sending OTP: $e');
         emit(AuthErrorState(errorMessage: 'Failed to send OTP'));
@@ -59,21 +51,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   on<OtpVerifiedEvent>((event, emit) async {
       emit(AuthLoadingState(isLoading: true));
       try {
-        final UserModel? user = await authService.verifyOtp(
+
+        final user = await authService.verifyOtp(
           event.verificationId,
           event.otp,
+          event.name,
         );
-        if (user != null) {
-          emit(AuthSuccessState(user: user));
-        } else {
-          emit(AuthErrorState(errorMessage: 'Invalid OTP'));
-        }
+        emit(AuthSuccessState(user));
       } catch (e) {
         log('Error verifying OTP: $e');
         emit(AuthErrorState(errorMessage: 'Failed to verify OTP'));
       }
   });
-        on<UserLoggedOutEvent>((event, emit) async {
+    
+    
+    on<UserLoggedOutEvent>((event, emit) async {
           emit (AuthLoadingState(isLoading: true));
           try {
             await authService.firebaseAuth.signOut();
@@ -82,5 +74,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             log('Error logging out: $e');
             emit(AuthErrorState(errorMessage: 'Failed to log out'));
           }});
+
+
+    // phone number check 
+    // on<PhoneCheckedEvent>((event, emit) async {
+    //   emit(AuthLoadingState(isLoading: true));
+    //   try 
+    //   {
+    //     final result = await FirebaseFunctions.instance.httpsCallable(
+    //       'checkIfPhoneNumberIsRegistered'
+    //     ).call({'phone' :  event.phoneNumber});
+
+    //     // if phone number exists
+    //     if (result.data['exists']){
+    //       emit(PhoneExistsState(result.data['uid']));
+    //     }
+    //     else 
+    //     {
+    //       emit(PhoneDoesNotExistState());
+    //     }
+    //   }
+    //   catch(e)
+    //   {
+    //     log('Error checking phone number: $e');
+    //     emit(AuthErrorState(errorMessage: 'Failed to check phone number'));
+    //   }
+    // });
   }
 }

@@ -41,7 +41,7 @@ class _SignUpPageState extends State<SignUpPage> {
             CustomToast.show(
               context: context,
               message: 'OTP was sent to ${phoneController.text}',
-              icon: Icons.check_circle_outline,
+              icon: Icons.sms_outlined,
               bgColor: AppColours.success,
             );
           }
@@ -55,21 +55,16 @@ class _SignUpPageState extends State<SignUpPage> {
               bgColor: AppColours.error,
             );
           }
-
+    
           // if successfully verified
           if (state is AuthSuccessState) {
             CustomToast.show(
               context: context,
-              message: 'Welcome, ${state.user.name}!',
+              message: 'Welcome, ${nameController.text}!',
               icon: Icons.check_circle_outline,
               bgColor: AppColours.success,
             );
               context.pushNamed(RouteConstants.home);
-
-            // Navigator.pushReplacement(
-            //   context,
-            // //  MaterialPageRoute(builder: (context) => HomePage()),
-            // );
           }
         },
 
@@ -142,13 +137,15 @@ class _SignUpPageState extends State<SignUpPage> {
               context.read<AuthBloc>().add(
                     OtpSentEvent(
                       phoneNumber: phoneController.text.trim(),
+                      isSignUp: true
                     ),
                   );
             } else {
               context.read<AuthBloc>().add( 
                     OtpVerifiedEvent(
                       verificationId: verificationId,
-                      otp: otpController.text.trim(),   
+                      otp: otpController.text.trim(), 
+                      name: nameController.text  
                     ),
                   );
               log('verificationId: $verificationId, otp: ${otpController.text}');

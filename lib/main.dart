@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
    return MaterialApp.router(
     debugShowCheckedModeBanner: false,
-    title: 'SleepyDriver Landing Page',
+    title: 'SleepyDriver Main Page',
     theme: AppTheme.lightTheme,
     routerConfig: _appRouter.router,
    );
