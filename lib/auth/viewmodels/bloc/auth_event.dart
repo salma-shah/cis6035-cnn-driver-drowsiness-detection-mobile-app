@@ -6,28 +6,9 @@ abstract class AuthEvent {
   List<Object> get props => [];
 }
 
-class UserSignedUpEvent extends AuthEvent {
-  final String name;
-  final String phoneNumber;
-  final Function(String) onCodeSent;
+class LogoutRequestedEvent extends AuthEvent {}
 
-  const UserSignedUpEvent({required this.name, required this.phoneNumber, required this.onCodeSent});
-
-  @override
-  List<Object> get props => [phoneNumber];
-}
-
-class UserLoggedOutEvent extends AuthEvent {}
-
-class UserLoggedInEvent extends AuthEvent {
-  final String phoneNumber;
-  final String verificationId;
-
-  const UserLoggedInEvent({required this.phoneNumber, required this.verificationId});
-
-  @override
-  List<Object> get props => [phoneNumber, verificationId];
-}
+class DeleteAccountRequestedEvent extends AuthEvent{}
 
 class OtpSentEvent extends AuthEvent {
   final String phoneNumber;

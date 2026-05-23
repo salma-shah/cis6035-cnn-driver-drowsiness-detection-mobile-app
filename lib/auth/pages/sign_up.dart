@@ -64,7 +64,7 @@ class _SignUpPageState extends State<SignUpPage> {
               icon: Icons.check_circle_outline,
               bgColor: AppColours.success,
             );
-              context.pushNamed(RouteConstants.home);
+              context.pushNamed(RouteConstants.profile);
           }
         },
 

@@ -119,54 +119,44 @@ Future<bool> phoneExists(String phone) async {
   //   }
   // }
 
-  // // update phone number
-  // // Future<void> updatePhoneNumber(String phoneNumber) async {
-  // //   User? user = currentUser;
-  // //   if (user != null) {
-  // //     await signInWithPhone(phoneNumber, (verificationId) async {
-  // //       // Handle OTP verification and update phone number
-  // //       // This is a placeholder for the actual OTP verification process
-  // //       // You would need to implement the logic to verify the OTP and update the phone number
-  // //     });
-  // //   }
-  // // }
-
   // // delete account
-  // Future<void> deleteUserAccount() async {
-//   try {
-//   await FirebaseAuth.instance.currentUser!.delete();
+  Future<void> deleteUserAccount() async {
+  try 
+  {
+  final user = firebaseAuth.currentUser;
+  if (user != null)
+  {
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).delete(); // deleting from the firestore db
+    await user.delete();
+  }
 
-//   } on FirebaseAuthException catch (e) {
-//     //log.e(e);
+  } on FirebaseAuthException catch (e) {
+     log('$e');
+     if (e.code == 'requires-recent-login')
+     {
+      reauthenticateAndDelete();
+      throw Exception('Please re-authenticate before deleting your account.');
+     }
 
-//     if (e.code == "requires-recent-login") {
-//       await _reauthenticateAndDelete();
-//     } else {
-//       // Handle other Firebase exceptions
-//     }
-//   } catch (e) {
-//    // log.e(e);
+  }
+}
 
-//     // Handle general exception
-//   }
-// }
+  Future<void> reauthenticateAndDelete() async {
+  try {
+    final providerData = firebaseAuth.currentUser?.providerData.first;
 
-//   Future<void> _reauthenticateAndDelete() async {
-//   try {
-//     final providerData = firebaseAuth.currentUser?.providerData.first;
+    if (AppleAuthProvider().providerId == providerData!.providerId) {
+      await firebaseAuth.currentUser!
+          .reauthenticateWithProvider(AppleAuthProvider());
+    } else if (GoogleAuthProvider().providerId == providerData.providerId) {
+      await firebaseAuth.currentUser!
+          .reauthenticateWithProvider(GoogleAuthProvider());
+    }
 
-//     if (AppleAuthProvider().providerId == providerData!.providerId) {
-//       await firebaseAuth.currentUser!
-//           .reauthenticateWithProvider(AppleAuthProvider());
-//     } else if (GoogleAuthProvider().providerId == providerData.providerId) {
-//       await firebaseAuth.currentUser!
-//           .reauthenticateWithProvider(GoogleAuthProvider());
-//     }
-
-//     await firebaseAuth.currentUser?.delete();
-//   } catch (e) {
-//     // Handle exceptions
-//   }
-// }
+    await firebaseAuth.currentUser?.delete();
+  } catch (e) {
+    // Handle exceptions
+  }
+}
 
 }

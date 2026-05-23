@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
 // user related model & service
@@ -47,7 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthErrorState(errorMessage: 'Failed to send OTP'));
       } 
   });
-
+  
   on<OtpVerifiedEvent>((event, emit) async {
       emit(AuthLoadingState(isLoading: true));
       try {
@@ -65,40 +66,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   });
     
     
-    on<UserLoggedOutEvent>((event, emit) async {
-          emit (AuthLoadingState(isLoading: true));
-          try {
-            await authService.firebaseAuth.signOut();
-            emit(AuthInitialState());
-          } catch (e) {
-            log('Error logging out: $e');
-            emit(AuthErrorState(errorMessage: 'Failed to log out'));
-          }});
+    on<LogoutRequestedEvent>((event, emit) async {
+      emit (AuthLoadingState(isLoading: true));
+      try {
+        await authService.firebaseAuth.signOut();
+        emit(AuthInitialState());
+      } catch (e) 
+      {
+        log('Error logging out: $e');
+        emit(AuthErrorState(errorMessage: 'Something went wrong with logging out!'));
+      }});
 
+      on<DeleteAccountRequestedEvent>((event, emit) async {
+        emit(AuthLoadingState(isLoading: true));
+        try {
+          await authService.deleteUserAccount();
+          emit(AuthInitialState());
+        }
+        catch (e)
+        {
+        log('Error logging out: $e');
+        emit(AuthErrorState(errorMessage: 'Something went wrong with deleting the account!'));
+        }
+      });
 
-    // phone number check 
-    // on<PhoneCheckedEvent>((event, emit) async {
-    //   emit(AuthLoadingState(isLoading: true));
-    //   try 
-    //   {
-    //     final result = await FirebaseFunctions.instance.httpsCallable(
-    //       'checkIfPhoneNumberIsRegistered'
-    //     ).call({'phone' :  event.phoneNumber});
-
-    //     // if phone number exists
-    //     if (result.data['exists']){
-    //       emit(PhoneExistsState(result.data['uid']));
-    //     }
-    //     else 
-    //     {
-    //       emit(PhoneDoesNotExistState());
-    //     }
-    //   }
-    //   catch(e)
-    //   {
-    //     log('Error checking phone number: $e');
-    //     emit(AuthErrorState(errorMessage: 'Failed to check phone number'));
-    //   }
-    // });
   }
 }
