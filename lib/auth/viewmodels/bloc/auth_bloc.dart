@@ -6,12 +6,14 @@ import 'package:meta/meta.dart';
 
 // user related model & service
 import 'package:sleepy_driver/auth/models/user.dart';
+import 'package:sleepy_driver/auth/repos/auth_repo.dart';
 import 'package:sleepy_driver/auth/services/auth_service.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final AuthRepo authRepo = AuthRepo();
   final AuthService authService = AuthService();
   AuthBloc() : super(AuthInitialState()) {
     on<AuthEvent>((event, emit) {});
@@ -21,7 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoadingState(isLoading: true));
       try {
         // checking if phone exists
-        final exists = await authService.phoneExists(event.phoneNumber);
+        final exists = await authRepo.phoneExists(event.phoneNumber);
         if (exists && event.isSignUp)
         {
           emit(AuthErrorState(errorMessage: 'This phone number is already registered'));
@@ -53,7 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoadingState(isLoading: true));
       try {
 
-        final user = await authService.verifyOtp(
+        final user = await authRepo.verifyOtp(
           event.verificationId,
           event.otp,
           event.name,
@@ -69,7 +71,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutRequestedEvent>((event, emit) async {
       emit (AuthLoadingState(isLoading: true));
       try {
-        await authService.firebaseAuth.signOut();
+        await authRepo.logOut();
         emit(AuthInitialState());
       } catch (e) 
       {
@@ -80,7 +82,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       on<DeleteAccountRequestedEvent>((event, emit) async {
         emit(AuthLoadingState(isLoading: true));
         try {
-          await authService.deleteUserAccount();
+          await authRepo.deleteUserAccount();
           emit(AuthInitialState());
         }
         catch (e)

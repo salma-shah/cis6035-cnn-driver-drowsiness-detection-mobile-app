@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
-import 'package:sleepy_driver/custom_widgets/text_field.dart';
-import 'package:sleepy_driver/custom_widgets/button.dart';
+import 'package:sleepy_driver/auth/custom_widgets/text_field.dart';
+import 'package:sleepy_driver/auth/custom_widgets/button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
-import 'package:sleepy_driver/custom_widgets/toast.dart';
+import 'package:sleepy_driver/auth/custom_widgets/toast.dart';
 
 // sign up page with phone number, name, and OTP fields
 class SignUpPage extends StatefulWidget {
@@ -22,6 +22,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  // final formKey = GlobalKey<Form>;
 
   bool otpSent = false;
   bool isLoading = false;
@@ -110,26 +111,47 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _buildBody(BuildContext context) {
     return Column(
       children: [
-        CustomTextField(
+        CustomAuthTextField(
           controller: nameController,
           hintText: 'Enter your name...',
           prefixIcon: Icons.person_rounded,
+          autovalidateMode: AutovalidateMode.disabled,
+            validator: (value) {
+          if (value == null || value.toString().trim().isEmpty) {
+            return 'Please enter your name';
+          }
+          return null;
+        },
         ),
         SizedBox(height: 20),
-        CustomTextField(
+        CustomAuthTextField(
           controller: phoneController,
          hintText: '+1-234-567-8900',
           prefixIcon: Icons.phone_rounded,
+          autovalidateMode: AutovalidateMode.disabled,
+            validator: (value) {
+          if (value == null || value.toString().trim().isEmpty) {
+            return 'Please enter the phone number';
+          }
+          return null;
+        },
         ),
         SizedBox(height: 20),
         if (otpSent)
-          CustomTextField(
+          CustomAuthTextField(
             controller: otpController,
             hintText: 'Enter 6-digit OTP...',
             prefixIcon: Icons.verified_user_rounded,
+            autovalidateMode: AutovalidateMode.disabled,
+            validator: (value) {
+           if (value == null || value.toString().trim().isEmpty) {
+            return 'Please enter the OTP';
+          }
+          return null;
+        },
           ),
         SizedBox(height: 20),
-        CustomButton(
+        CustomAuthButton(
           text: otpSent ? 'Verify OTP' : 'Sign Up',
           onPressed: () {
           //  if (isLoading) return;

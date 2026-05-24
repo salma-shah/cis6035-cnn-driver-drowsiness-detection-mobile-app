@@ -6,31 +6,13 @@ import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/styles/app_theme.dart';
-import 'package:sleepy_driver/custom_widgets/text_field.dart';
-import 'package:sleepy_driver/custom_widgets/button.dart';
+import 'package:sleepy_driver/auth/custom_widgets/text_field.dart';
+import 'package:sleepy_driver/auth/custom_widgets/button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
-import 'package:sleepy_driver/custom_widgets/toast.dart';
+import 'package:sleepy_driver/auth/custom_widgets/toast.dart';
 
 // login page with phone and otp fields
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-   return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'SleepyDriver Login Page',
-    theme: AppTheme.lightTheme,
-    home: LoginPage(),
-   );
-  }
-}
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -79,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
           if (state is AuthSuccessState) {
             CustomToast.show(
               context: context,
-              message: 'Welcome back ${state.user.name}!',
+              message: 'Welcome back, ${state.user.name}!',
               icon: Icons.check_circle_outline,
               bgColor: AppColours.success,
               );
@@ -127,20 +109,34 @@ Widget _buildHeader(BuildContext context) {
 Widget _buildBody(BuildContext context) {
    return Column(
     children: [
-      CustomTextField(
+      CustomAuthTextField(
         controller: phoneController,
         hintText: '+1-234-567-8900',
         prefixIcon: Icons.phone_rounded,
+        autovalidateMode: AutovalidateMode.disabled,
+        validator: (value) {
+          if (value == null || value.toString().trim().isEmpty) {
+            return 'Please enter your phone number';
+          }
+          return null;
+        },
       ),
       const SizedBox(height: 20),
       if (otpSent)
-          CustomTextField(
+          CustomAuthTextField(
             controller: otpController,
             hintText: 'Enter 6-digit OTP...',
             prefixIcon: Icons.verified_user_rounded,
+            autovalidateMode: AutovalidateMode.disabled,
+            validator: (value) {
+          if (value == null || value.toString().trim().isEmpty) {
+            return 'Please enter the OTP';
+          }
+          return null;
+        },
           ),
       const SizedBox(height: 35),
-      CustomButton(
+      CustomAuthButton(
         text: otpSent ? 'Verify OTP' : 'Login',
         onPressed: (){
           if (!otpSent) {
