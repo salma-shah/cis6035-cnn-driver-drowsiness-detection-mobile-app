@@ -7,14 +7,12 @@ import 'package:meta/meta.dart';
 // user related model & service
 import 'package:sleepy_driver/auth/models/user.dart';
 import 'package:sleepy_driver/auth/repos/auth_repo.dart';
-import 'package:sleepy_driver/auth/services/auth_service.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepo authRepo = AuthRepo();
-  final AuthService authService = AuthService();
   AuthBloc() : super(AuthInitialState()) {
     on<AuthEvent>((event, emit) {});
 
@@ -36,7 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
 
       final verificationId =
-      await authService.sendOtp(
+      await authRepo.sendOtp(
       event.phoneNumber);
       
       log("OTP WAS SENT");

@@ -8,7 +8,7 @@ class AuthRepo {
     return await authService.phoneExists(phone);
   }
 
-  Future<String> sendOtp(String phoneNum, String verificationId) async {
+  Future<String> sendOtp(String phoneNum) async {
     return await authService.sendOtp(phoneNum);
   }
 

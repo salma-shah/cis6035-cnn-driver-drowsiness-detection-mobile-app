@@ -67,26 +67,6 @@ class AuthService {
     userDoc.data()!,
   );
   }
-
-// getting current user
- Future<UserModel?> getCurrentUser(String uid) async {
-    final firebaseUser = firebaseAuth.currentUser;
-
-    if (firebaseUser == null) {
-      return null;
-    }
-
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .get();
-
-    if (!doc.exists) {
-      return null;
-    }
-
-    return UserModel.fromMap(doc.data()!);
-  }
   
   String formatPhone1(String phone) {
   if (phone.startsWith('0')) {
@@ -94,8 +74,8 @@ class AuthService {
   }
   return phone;
   }
-
-Future<bool> phoneExists(String phone) async {
+  
+  Future<bool> phoneExists(String phone) async {
   String formatPhone = phone.trim();
   log('Phone number passed: $phone');
   log('Formatted phone: $formatPhone');
@@ -109,15 +89,6 @@ Future<bool> phoneExists(String phone) async {
   Future<void> logOut() async {
     await firebaseAuth.signOut();
   }
-
-  // update name 
-  // Future<void> updateName(String name) async {
-  //   User? user = currentUser;
-  //   if (user != null) {
-  //     await user.updateDisplayName(name);
-  //     await user.reload();
-  //   }
-  // }
 
   // // delete account
   Future<void> deleteUserAccount() async {

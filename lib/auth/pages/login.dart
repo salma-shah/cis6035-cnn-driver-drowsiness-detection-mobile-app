@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
-import 'package:sleepy_driver/styles/app_theme.dart';
 import 'package:sleepy_driver/auth/custom_widgets/text_field.dart';
 import 'package:sleepy_driver/auth/custom_widgets/button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
