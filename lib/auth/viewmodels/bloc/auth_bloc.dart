@@ -52,7 +52,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   on<OtpVerifiedEvent>((event, emit) async {
       emit(AuthLoadingState(isLoading: true));
       try {
-
         final user = await authRepo.verifyOtp(
           event.verificationId,
           event.otp,

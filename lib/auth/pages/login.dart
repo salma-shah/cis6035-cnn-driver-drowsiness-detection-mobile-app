@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/auth/custom_widgets/text_field.dart';
-import 'package:sleepy_driver/auth/custom_widgets/button.dart';
+import 'package:sleepy_driver/custom_widgets/button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
 import 'package:sleepy_driver/auth/custom_widgets/toast.dart';
@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is OtpCodeSentState) {
             setState(() {
@@ -67,27 +67,37 @@ class _LoginPageState extends State<LoginPage> {
               context.pushNamed(RouteConstants.home);
           } 
         },
-
-        child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
-            return Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: 150), 
-                  _buildHeader(context), 
-                  SizedBox(height: 65),
-                  _buildBody(context)       
-              ],
-            ),
+          final isLoading = state is AuthLoadingState;
+            
+            return Stack(
+              children: [ Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: SafeArea(
+                        child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 150), 
+                    _buildHeader(context), 
+                    SizedBox(height: 65),
+                    _buildBody(context)       
+                ],
+              ),
+                        ),
+                      ),),
+        if (isLoading)
+        Container(
+          color: Colors.black26,
+          child: Center(
+            child:
+                CircularProgressIndicator(),
           ),
-        ),);
+        ),
+              ]
+            );
           },
         )
-    )
     );
   }
 
@@ -135,7 +145,7 @@ Widget _buildBody(BuildContext context) {
         },
           ),
       const SizedBox(height: 35),
-      CustomAuthButton(
+      CustomGeneralButton(
         text: otpSent ? 'Verify OTP' : 'Login',
         onPressed: (){
           if (!otpSent) {
