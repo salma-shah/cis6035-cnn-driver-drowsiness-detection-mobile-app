@@ -21,8 +21,10 @@ class AppTheme
       foregroundColor: AppColours.lightButtonText,
       textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+       side: const BorderSide(color: AppColours.primary, width: 2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
+       
       ),
     ),
   ),
