@@ -18,7 +18,7 @@ class CustomProfileTextField extends StatelessWidget {
       width: 250,
       child: TextField(
         style: const TextStyle(
-          fontSize: 10,
+          fontSize: 13,
         ),
         textAlign: TextAlign.left,
         controller: controller,
@@ -26,10 +26,7 @@ class CustomProfileTextField extends StatelessWidget {
           suffixIcon: icon,
           filled: true,
           fillColor: AppColours.lightBackground,
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 8,
-          ),
-      
+          contentPadding: const EdgeInsets.all(12.0),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
             borderSide: const BorderSide(
