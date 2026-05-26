@@ -5,6 +5,7 @@ import 'package:sleepy_driver/styles/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sleepy_driver/firebase_options.dart';
 import 'package:sleepy_driver/routing/routes.dart';
+import 'package:sleepy_driver/user_profile/viewmodels/bloc/user_profile_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,7 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => UserProfileBloc()),
       ],
       child: MyApp(),
     ));
@@ -37,4 +39,6 @@ class MyApp extends StatelessWidget {
     routerConfig: _appRouter.router,
    );
   }
+
+  
 }
