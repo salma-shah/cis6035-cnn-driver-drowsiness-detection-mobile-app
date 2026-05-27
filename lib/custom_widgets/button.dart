@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
-class CustomButton extends StatelessWidget {
+class CustomGeneralButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final Color? bgColor;
+  final Color? txtColor;
 
-  const CustomButton({
+  const CustomGeneralButton({
     super.key,
     required this.text,
     required this.onPressed,
+    this.txtColor,
+    this.bgColor
   });
 
   @override
@@ -17,12 +21,17 @@ class CustomButton extends StatelessWidget {
       height: 50,
       child: ElevatedButton(
         onPressed: onPressed,
-        style: Theme.of(context).elevatedButtonTheme.style,
+        style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
+          backgroundColor: bgColor != null
+          ? WidgetStatePropertyAll(bgColor) : null,
+          foregroundColor: txtColor != null 
+          ? WidgetStatePropertyAll(txtColor) : null
+        )
+        ,
         child: Text(
           text,
           style: const TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.w800
           ),
         ),
       ),

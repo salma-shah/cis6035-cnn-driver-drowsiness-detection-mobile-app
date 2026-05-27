@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:sleepy_driver/custom_widgets/button.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/home/custom_widgets/card.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sleepy_driver/routing/route_constants.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -58,37 +60,44 @@ class HomePage extends StatelessWidget {
                   stream: Stream.periodic(const Duration(seconds: 1)), 
                   builder: (context, snapshot)
                   {
+                    final now = snapshot.data ?? DateTime.now();
                     // day and date
-                    return Text(DateFormat('EEEE,\n d MMM').format(DateTime.now()),
+                    return Text(DateFormat('EEEE,\n d MMM').format(now),
                     style: TextStyle(
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).primaryColor,
                     ),);  // current date formatted 
                   }),
               ),
-              SizedBox(width: 10),
+              SizedBox(width: 8),
                 // line in between
                 VerticalDivider(
                   color: AppColours.primary,
                   thickness: 2,
                 ),
-                SizedBox(width: 10,),
-                Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        StreamBuilder(stream: Stream.periodic(Duration(seconds: 1)), 
-                        builder: (context, snapshot)
-                        {  // time
-                          return Text(DateFormat('h: mm a').format(DateTime.now()),
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Theme.of(context).primaryColor,
-                          ),);
-                        }),
-                        // location txt
-                      ],
+                SizedBox(width: 8),
+                Flexible(
+                  child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FittedBox(fit: BoxFit.scaleDown,
+                          child: StreamBuilder(stream: Stream.periodic(Duration(seconds: 1)), 
+                          builder: (context, snapshot)
+                          {  // time
+                          final now = snapshot.data ?? DateTime.now();
+                            return Text(DateFormat('h: mm a').format(now),
+                             maxLines: 1,
+                             overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Theme.of(context).primaryColor,
+                            ),);
+                          }),
+                          ),                     // location txt
+                        ],
+                    ),
                   ),
                 )
             ],
@@ -114,19 +123,27 @@ class HomePage extends StatelessWidget {
       crossAxisSpacing: 6,
       mainAxisSpacing: 20,
       children: [
-        HomeCard(onTap: () {},
+        HomeCard(onTap: () {
+          context.pushNamed(RouteConstants.profile);
+        },
         svgPath: 'assets/images/img_settings.svg',
         text: 'Settings',
         ),
-        HomeCard(onTap: () {},
+        HomeCard(onTap: () {
+         // context.pushNamed(RouteConstants.dashboard);
+        },
         svgPath: 'assets/images/img_dashboard.svg',
         text:'Safety Dashboard',
         ),
-        HomeCard(onTap: () {},
+        HomeCard(onTap: () {
+           // context.pushNamed(RouteConstants.userManual);
+        },
         svgPath: 'assets/images/img_user_manual.svg',
         text: 'User Manual',
         ),
-        HomeCard(onTap: () {},
+        HomeCard(onTap: () {
+           // context.pushNamed(RouteConstants.suggestions);
+        },
         svgPath: 'assets/images/img_suggestions.svg',
         text: 'Suggestions',
         ),
