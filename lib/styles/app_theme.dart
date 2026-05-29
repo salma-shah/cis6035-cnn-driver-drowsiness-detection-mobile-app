@@ -10,7 +10,10 @@ class AppTheme
    brightness: Brightness.light,
    colorScheme: ColorScheme.light(
    primary: AppColours.primary, 
-   secondary: AppColours.secondary
+   onPrimary: AppColours.lightText,
+   secondary: AppColours.secondary,
+   tertiary: AppColours.fill,
+   error: AppColours.error
   ),
 
   scaffoldBackgroundColor: AppColours.lightBackground,
@@ -19,9 +22,9 @@ class AppTheme
     style: ElevatedButton.styleFrom(
       backgroundColor: AppColours.primary,
       foregroundColor: AppColours.lightButtonText,
-      textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+      textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, fontFamily:'Montserrat'),
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-       side: const BorderSide(color: AppColours.primary, width: 2),
+      side: const BorderSide(color: AppColours.primary, width: 2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
        
