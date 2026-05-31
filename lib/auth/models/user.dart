@@ -1,10 +1,10 @@
 class UserModel
 {
-  String? userId;
-  String? name;
-  String? phoneNumber;
+  String userId;
+  String name;
+  String phoneNumber;
 
-  UserModel({this.userId, this.name, this.phoneNumber});
+  UserModel({required this.userId, required this.name, required this.phoneNumber});
 
    Map<String, dynamic> toMap() {
     return {
