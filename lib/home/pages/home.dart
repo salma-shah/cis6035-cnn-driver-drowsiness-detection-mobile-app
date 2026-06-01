@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sleepy_driver/custom_widgets/button.dart';
+import 'package:sleepy_driver/shared_custom_widgets/button.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/home/custom_widgets/card.dart';
 import 'package:go_router/go_router.dart';
@@ -108,8 +108,8 @@ class HomePage extends StatelessWidget {
         CustomGeneralButton(
           onPressed: () {}, 
           text: 'Start Trip',
-          bgColor: AppColours.accent,
-          txtColor: AppColours.primary,
+          bgColor: Theme.of(context).colorScheme.secondary,
+          txtColor: Theme.of(context).colorScheme.primary,
           )
       ],
     ),  
@@ -126,8 +126,8 @@ class HomePage extends StatelessWidget {
         HomeCard(onTap: () {
           context.pushNamed(RouteConstants.profile);
         },
-        svgPath: 'assets/images/img_settings.svg',
-        text: 'Settings',
+        svgPath: 'assets/images/img_profile.svg',
+        text: 'Profile',
         ),
         HomeCard(onTap: () {
          // context.pushNamed(RouteConstants.dashboard);
@@ -136,7 +136,7 @@ class HomePage extends StatelessWidget {
         text:'Safety Dashboard',
         ),
         HomeCard(onTap: () {
-           // context.pushNamed(RouteConstants.userManual);
+           context.pushNamed(RouteConstants.safetyDashboard);
         },
         svgPath: 'assets/images/img_user_manual.svg',
         text: 'User Manual',

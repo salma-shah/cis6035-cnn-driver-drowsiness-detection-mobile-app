@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/auth/pages/login.dart';
 import 'package:sleepy_driver/auth/pages/sign_up.dart';
+import 'package:sleepy_driver/dashboard/pages/safety_dashboard.dart';
 import 'package:sleepy_driver/fatigue_alerts/pages/mild_fatigue.dart';
 import 'package:sleepy_driver/fatigue_alerts/pages/mod_fatigue.dart';
 import 'package:sleepy_driver/fatigue_alerts/pages/severe_fatigue.dart';
@@ -32,27 +33,27 @@ class AppRouter{
     StatefulShellRoute.indexedStack(
   branches: [
     // safety dashboard
-    // StatefulShellBranch(
-    //   routes: [
-    //     GoRoute(
-    //       path: '/safety-dashbaord',
-    //       name: RouteConstants.safetyDashboard,
-    //       builder: (context, state) =>
-    //           MildFatiguePage(),
-    //     ),
-    //   ],
-    // ),
-
-       StatefulShellBranch(
+    StatefulShellBranch(
       routes: [
         GoRoute(
-          path: '/home',
-          name: RouteConstants.home,
+          path: '/safety-dashboard',
+          name: RouteConstants.safetyDashboard,
           builder: (context, state) =>
-              HomePage(),
+              SafetyDashboardPage(),
         ),
       ],
     ),
+
+    //    StatefulShellBranch(
+    //   routes: [
+    //     GoRoute(
+    //       path: '/home',
+    //       name: RouteConstants.home,
+    //       builder: (context, state) =>
+    //           HomePage(),
+    //     ),
+    //   ],
+    // ),
 
 // suggestions
     StatefulShellBranch(
