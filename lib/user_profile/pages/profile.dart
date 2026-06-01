@@ -35,8 +35,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 log("Init state just got hit second time");
                 // displaying user profile data
                 if (state is UserProfileDisplayedState) {
-                  nameController.text = state.user.name ?? 'Default';
-                  phoneNumController.text = state.user.phoneNumber ?? 'Default';
+                  nameController.text = state.user.name ;
+                  phoneNumController.text = state.user.phoneNumber ;
                   locationController.text = 'Colombo';
                 }}),
           BlocListener<AuthBloc, AuthState>(
@@ -119,10 +119,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           SizedBox(height: 10),
           CircleAvatar(
-            radius: 57,
+            radius: 72,
             backgroundColor: AppColours.primary,
             child: CircleAvatar(
-              radius: 55,
+              radius: 70,
               backgroundImage: AssetImage('assets/images/img_profile_icon.png'),
             ),
           ),

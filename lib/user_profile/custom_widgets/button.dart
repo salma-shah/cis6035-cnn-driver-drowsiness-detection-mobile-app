@@ -13,7 +13,7 @@ class CustomProfileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 110,
+      width: 120,
       height: 50,
       child: ElevatedButton(
         onPressed: onPressed,
@@ -22,11 +22,13 @@ class CustomProfileButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(24)
           ))
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w900
+        child: FittedBox(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w900
+            ),
           ),
         ),
         
