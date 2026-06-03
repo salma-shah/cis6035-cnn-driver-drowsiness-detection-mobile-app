@@ -20,9 +20,43 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController phoneNumController = TextEditingController();
+  final TextEditingController nameController = TextEditingController(text: 'No name.');
+  final TextEditingController locationController = TextEditingController(text: 'No location.');
+  final TextEditingController phoneNumController = TextEditingController(text: 'No phone number.');
+
+  // focus nodes
+  final FocusNode focusNameNode = FocusNode();
+  bool isNameFocused = false;
+  final FocusNode focusLocationNode = FocusNode();
+  bool isLocationFocused = false;
+
+   @override
+  void initState() {
+    super.initState();  
+    context.read<UserProfileBloc>().add(
+    UserProfileDisplayedEvent(),
+  );    
+   focusNameNode.addListener(() {
+      setState(() {
+        isNameFocused = focusNameNode.hasFocus;
+      });
+    });
+    focusLocationNode.addListener(() {
+      setState(() {
+        isLocationFocused = focusLocationNode.hasFocus;
+      });
+    });
+  }
+
+    @override
+  void dispose() {
+    nameController.dispose();
+    locationController.dispose();
+    phoneNumController.dispose();
+    focusNameNode.dispose();
+    focusLocationNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +107,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
               }
             },
-          )],   
+          ),
+          //  BlocListener<FocusBloc, FocusState>(
+          //     listener: (context, state) {
+          //       log("Focus state just got hit second time");
+          //       // displaying user profile data
+          //       // ignore: unnecessary_type_check
+          //       if (state is FocusState) {
+                 
+          //       }}),
+          ],   
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: SafeArea(
@@ -93,15 +136,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ));
   }
 
-  @override
-  void initState() {
-    super.initState();  
-
-    context.read<UserProfileBloc>().add(
-    UserProfileDisplayedEvent(),
-    
-  );    
-  }
 
   Widget _buildHeader(BuildContext context) {
     return Container(
@@ -141,20 +175,33 @@ class _ProfilePageState extends State<ProfilePage> {
           SizedBox(height: 3),
           CustomProfileTextField(
             controller: nameController,
-            icon: Icon(Icons.check, color: AppColours.primary),
+            focusNode: focusNameNode,
+            icon: isNameFocused ?
+            IconButton(
+              icon: Icon(Icons.check, color: AppColours.primary),
+              onPressed: () {
+                nameController.clear();
+              },
+            ) : null,
           ),
           const SizedBox(height: 15),
           Text('Location', style: TextStyle(fontSize: 15)),
           SizedBox(height: 3),
           CustomProfileTextField(
             controller: locationController,
-            icon: Icon(Icons.check, color: AppColours.primary),
+            focusNode: focusLocationNode,
+            icon: isLocationFocused ?
+            IconButton(
+              icon: Icon(Icons.check, color: AppColours.primary),
+              onPressed: () {
+                locationController.clear();
+              },
+            ) : null,
           ),
           const SizedBox(height: 15),
           Text('Phone Number', style: TextStyle(fontSize: 15)),
           SizedBox(height: 3),
           CustomProfileTextField(
-            icon: Icon(Icons.check, color: AppColours.primary),
             readOnly: true,
             controller: phoneNumController,
           ),

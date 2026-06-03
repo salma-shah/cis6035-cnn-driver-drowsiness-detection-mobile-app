@@ -4,24 +4,27 @@ import 'package:sleepy_driver/styles/app_colours.dart';
 class CustomProfileTextField extends StatelessWidget {
   final TextEditingController? controller;
   final bool? readOnly;
-  final Icon icon;
+  final IconButton? icon;
+  final FocusNode? focusNode;
 
   const CustomProfileTextField({
     this.controller,
     this.readOnly,
-    required this.icon
+    this.icon,
+    this.focusNode
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 280,
-      child: TextField(
+      child: TextFormField(
         style: const TextStyle(
           fontSize: 13,
         ),
         textAlign: TextAlign.left,
         controller: controller,
+        focusNode: focusNode,
         decoration: InputDecoration(
           suffixIcon: icon,
           filled: true,
