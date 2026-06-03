@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
@@ -18,8 +19,9 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     _timer = Timer(const Duration(seconds: 3), () {
+      log('SPLASH -> LOGIN');
       // navigating to the next page after the timer ends
-      context.pushNamed(RouteConstants.login);
+      context.goNamed(RouteConstants.login);
     });
   }
 
@@ -33,7 +35,6 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -43,7 +44,6 @@ class _SplashPageState extends State<SplashPage> {
             ],
           ),
         ),
-      ),
     );
   }
 }
@@ -65,6 +65,7 @@ Widget _buildHeader(BuildContext context) {
 
 Widget _buildBody() {
    return Expanded(
+  //  width: double.infinity,
           child: Align(
             alignment: Alignment.bottomCenter,
             child:

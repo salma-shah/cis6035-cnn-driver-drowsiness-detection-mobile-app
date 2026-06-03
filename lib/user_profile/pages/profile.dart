@@ -32,7 +32,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
    @override
   void initState() {
-    super.initState();  
+    super.initState(); 
+    log('PROFILE INIT'); 
     context.read<UserProfileBloc>().add(
     UserProfileDisplayedEvent(),
   );    
@@ -55,11 +56,13 @@ class _ProfilePageState extends State<ProfilePage> {
     phoneNumController.dispose();
     focusNameNode.dispose();
     focusLocationNode.dispose();
+    log('PROFILE DIS');
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    log('PROFILE BUILD');
     return 
      Scaffold(
       body: MultiBlocListener(
@@ -67,14 +70,35 @@ class _ProfilePageState extends State<ProfilePage> {
            BlocListener<UserProfileBloc, UserProfileState>(
               listener: (context, state) {
                 log("Init state just got hit second time");
+                 log('USER PROFILE STATE: ${state.runtimeType}');
+                if (!mounted) return;
                 // displaying user profile data
                 if (state is UserProfileDisplayedState) {
                   nameController.text = state.user.name ;
                   phoneNumController.text = state.user.phoneNumber ;
-                  locationController.text = 'Colombo';
-                }}),
+                  locationController.text = 'Colombo';}
+
+                // updated profile succcess / error
+                if (state is UserProfileSuccessState) {
+                  CustomToast.show(
+                    context: context,
+                    message: 'Profile updated successfully.',
+                    bgColor: AppColours.success,
+                    icon: Icons.check_circle_outline,
+                  );
+                } else if (state is UserProfileErrorState) {
+                  CustomToast.show(
+                    context: context,
+                    message: state.errorMessage,
+                    bgColor : Theme.of(context).colorScheme.error,
+                    icon: Icons.error_outline,
+                  );
+                }
+  }),
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
+               log('AUTH STATE CHANGED: $state');
+               log('AUTH STATE CHANGED: ${state.runtimeType}');
               if (state is AuthAccountDeletedState) {
                 // deleting account
                   CustomToast.show(
@@ -83,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     bgColor: AppColours.success,
                     icon: Icons.error_outline,
                   );
-                  context.pushNamed(RouteConstants.splash);
+                  context.goNamed(RouteConstants.splash);
                   return;
                 } 
                if (state is AuthLoggedOutState)
@@ -95,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     bgColor: AppColours.success,
                     icon: Icons.check_circle_outline,
                   );
-                  context.pushNamed(RouteConstants.splash);
+                  context.goNamed(RouteConstants.splash);
                   return;
               }
               if (state is AuthErrorState) {
@@ -108,14 +132,6 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             },
           ),
-          //  BlocListener<FocusBloc, FocusState>(
-          //     listener: (context, state) {
-          //       log("Focus state just got hit second time");
-          //       // displaying user profile data
-          //       // ignore: unnecessary_type_check
-          //       if (state is FocusState) {
-                 
-          //       }}),
           ],   
         child: Padding(
           padding: const EdgeInsets.all(15.0),
@@ -180,7 +196,12 @@ class _ProfilePageState extends State<ProfilePage> {
             IconButton(
               icon: Icon(Icons.check, color: AppColours.primary),
               onPressed: () {
-                nameController.clear();
+                context.read<UserProfileBloc>().add(
+                  UserProfileUpdatedEvent(values: {
+                    'name': nameController.text,
+                  }),
+                );
+              //  nameController.clear();
               },
             ) : null,
           ),
@@ -194,6 +215,11 @@ class _ProfilePageState extends State<ProfilePage> {
             IconButton(
               icon: Icon(Icons.check, color: AppColours.primary),
               onPressed: () {
+                context.read<UserProfileBloc>().add(
+                  UserProfileUpdatedEvent(values: {
+                    'location': locationController.text,
+                  }),
+                );
                 locationController.clear();
               },
             ) : null,
@@ -216,6 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 text: 'Log Out',
                 onPressed: () {
                   context.read<AuthBloc>().add(LogoutRequestedEvent());
+                //  context.pushNamed(RouteConstants.splash);
                 },
               ),
               CustomProfileButton(
@@ -233,12 +260,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         TextButton(
                           onPressed: () => context.pop(false),
                           child: Text('No'),
-                        ), // dismiss i and takes back to prev screen
+                        ), // dismiss it and takes back to prev screen
                         TextButton(
                           onPressed: () {
                             context.read<AuthBloc>().add(
                               DeleteAccountRequestedEvent(),
-                            );                           
+                            );  
+                          //  context.pushNamed(RouteConstants.splash);                         
                           },
                           child: Text('Yes'), // deletes the account
                         ),

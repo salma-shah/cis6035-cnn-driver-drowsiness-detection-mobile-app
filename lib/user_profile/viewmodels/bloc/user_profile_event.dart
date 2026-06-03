@@ -8,7 +8,6 @@ abstract class UserProfileEvent {
 
 class UserProfileDisplayedEvent extends UserProfileEvent{}
 
-
 class UserProfileUpdatedEvent extends UserProfileEvent
 {
   final Map<String,dynamic> values;

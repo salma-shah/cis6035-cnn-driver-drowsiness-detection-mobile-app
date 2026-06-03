@@ -11,7 +11,7 @@ class UserProfileRepo
    }
 
    // update user details
-   Future<void> updateUserName(Map<String,dynamic> fields) async
+   Future<void> updateUserFields(Map<String,dynamic> fields) async
     {
     return await authService.updateUserFields(fields);   }
 }

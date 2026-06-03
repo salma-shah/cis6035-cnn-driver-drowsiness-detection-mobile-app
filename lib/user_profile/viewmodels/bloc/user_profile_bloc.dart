@@ -18,7 +18,7 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
       emit(UserProfileLoadingState(isLoading: true));
       try 
       {
-        await userProfileRepo.updateUserName(event.values);
+        await userProfileRepo.updateUserFields(event.values);
         final updatedUserProfile = await userProfileRepo.getUserProfile();
         if (updatedUserProfile != null) {
           emit(UserProfileSuccessState(updatedUserProfile));
