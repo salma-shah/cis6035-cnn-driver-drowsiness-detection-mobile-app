@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/auth/pages/login.dart';
@@ -17,9 +19,9 @@ final routerKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 class AppRouter{
   GoRouter get router => GoRouter(
     navigatorKey: routerKey,
-    initialLocation: RouteConstants.home,
+    initialLocation: RouteConstants.splash,
     routes: [
-      GoRoute(name: RouteConstants.splash, path: '/', builder: (context, state) => const SplashPage()),
+      GoRoute(name: RouteConstants.splash, path: '/splash', builder: (context, state) => const SplashPage()),
       GoRoute(name: RouteConstants.signUp, path: '/signup', builder: (context, state) => const SignUpPage()),
       GoRoute(name: RouteConstants.login, path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(name: RouteConstants.home, path: '/home', builder: (context, state) => const HomePage()),
@@ -27,8 +29,7 @@ class AppRouter{
       // GoRoute(name: RouteConstants.mildFatigue, path: '/mild-fatigue', builder: (context, state) => MildFatiguePage()),
       GoRoute(name: RouteConstants.modFatigue, path: '/mod-fatigue', builder: (context, state) => ModFatigue(),),
       GoRoute(name: RouteConstants.severeFatigue, path: '/severe-fatigue', builder: (context, state) => SevereFatiguePage()) ,
-
-    
+ 
     // statefull shell route for the nav bar
     StatefulShellRoute.indexedStack(
   branches: [
@@ -44,23 +45,12 @@ class AppRouter{
       ],
     ),
 
-    //    StatefulShellBranch(
-    //   routes: [
-    //     GoRoute(
-    //       path: '/home',
-    //       name: RouteConstants.home,
-    //       builder: (context, state) =>
-    //           HomePage(),
-    //     ),
-    //   ],
-    // ),
-
 // suggestions
     StatefulShellBranch(
       routes: [
         GoRoute(
-           path: '/suggestions',
-          name: RouteConstants.suggestions,
+           path: '/mild-fatigue',
+          name: RouteConstants.mildFatigue,
           builder: (context, state) =>
               MildFatiguePage(),
         ),
@@ -73,9 +63,14 @@ class AppRouter{
         GoRoute(
           path: '/profile',
           name: RouteConstants.profile,
-          builder: (context, state) =>
-              ProfilePage(),
-        ),
+        //   builder: (context, state) =>
+        //   log('PROFILE ROUTE BUILDER'),
+        //       ProfilePage(),
+        // ),
+         builder: (context, state) {
+    log('PROFILE ROUTE BUILDER');
+    return ProfilePage();
+  },)
       ],
     ),
   ],

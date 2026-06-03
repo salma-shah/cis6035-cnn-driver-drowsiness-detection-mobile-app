@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/nav_bar/destination.dart';
@@ -12,6 +14,7 @@ class DefaultLayout extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    log('Current Index: ${navigationShell.currentIndex}');
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
@@ -34,7 +37,10 @@ class DefaultLayout extends StatelessWidget{
 
         }),
         selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: navigationShell.goBranch,
+        onDestinationSelected: (index) {
+  log('Selected: $index');
+  navigationShell.goBranch(index);
+},
         indicatorColor: Theme.of(context).colorScheme.secondary,
         backgroundColor: Theme.of(context).colorScheme.tertiary,      
       ),);
