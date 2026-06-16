@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sleepy_driver/shared_custom_widgets/button.dart';
+import 'package:sleepy_driver/shared/custom_widgets/button.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/home/custom_widgets/card.dart';
 import 'package:go_router/go_router.dart';
@@ -70,13 +70,13 @@ class HomePage extends StatelessWidget {
                     ),);  // current date formatted 
                   }),
               ),
-              SizedBox(width: 8),
+              SizedBox(width: 10),
                 // line in between
                 VerticalDivider(
                   color: AppColours.primary,
                   thickness: 2,
                 ),
-                SizedBox(width: 8),
+                SizedBox(width: 10),
                 Flexible(
                   child: Container(
                       child: Column(
@@ -106,7 +106,9 @@ class HomePage extends StatelessWidget {
         SizedBox(height: 30,),
          // start trip button section
         CustomGeneralButton(
-          onPressed: () {}, 
+          onPressed: () {
+            context.pushNamed(RouteConstants.safetyDashboard);
+          }, 
           text: 'Start Trip',
           bgColor: Theme.of(context).colorScheme.secondary,
           txtColor: Theme.of(context).colorScheme.primary,
@@ -130,19 +132,19 @@ class HomePage extends StatelessWidget {
         text: 'Profile',
         ),
         HomeCard(onTap: () {
-         // context.pushNamed(RouteConstants.dashboard);
+          context.pushNamed(RouteConstants.safetyDashboard);
         },
         svgPath: 'assets/images/img_dashboard.svg',
         text:'Safety Dashboard',
         ),
         HomeCard(onTap: () {
-           context.pushNamed(RouteConstants.safetyDashboard);
+           context.pushNamed(RouteConstants.userManualPg1);
         },
         svgPath: 'assets/images/img_user_manual.svg',
         text: 'User Manual',
         ),
         HomeCard(onTap: () {
-           // context.pushNamed(RouteConstants.suggestions);
+         //  context.pushNamed(RouteConstants.userManualPg1);
         },
         svgPath: 'assets/images/img_suggestions.svg',
         text: 'Suggestions',
