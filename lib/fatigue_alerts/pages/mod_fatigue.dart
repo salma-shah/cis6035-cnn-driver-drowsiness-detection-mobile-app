@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:sleepy_driver/shared_custom_widgets/button.dart';
+import 'package:sleepy_driver/shared/custom_widgets/button.dart';
 
 class ModFatigue extends StatelessWidget
 {
