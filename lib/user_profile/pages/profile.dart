@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sleepy_driver/location/viewmodels/bloc/location_bloc.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/user_profile/custom_widgets/text_field.dart';
@@ -21,14 +22,14 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController nameController = TextEditingController(text: 'No name.');
-  final TextEditingController locationController = TextEditingController(text: 'No location.');
+  final TextEditingController locationController = TextEditingController(text: 'No Location');
   final TextEditingController phoneNumController = TextEditingController(text: 'No phone number.');
 
   // focus nodes
   final FocusNode focusNameNode = FocusNode();
   bool isNameFocused = false;
-  final FocusNode focusLocationNode = FocusNode();
-  bool isLocationFocused = false;
+  // final FocusNode focusLocationNode = FocusNode();
+  // bool isLocationFocused = false;
 
    @override
   void initState() {
@@ -42,11 +43,12 @@ class _ProfilePageState extends State<ProfilePage> {
         isNameFocused = focusNameNode.hasFocus;
       });
     });
-    focusLocationNode.addListener(() {
-      setState(() {
-        isLocationFocused = focusLocationNode.hasFocus;
-      });
-    });
+
+// loading location event
+    log("LOCATION IN USER PROF INIT");
+    context.read<LocationBloc>().add(
+    LocationDisplayedEvent(),
+  ); 
   }
 
     @override
@@ -55,7 +57,6 @@ class _ProfilePageState extends State<ProfilePage> {
     locationController.dispose();
     phoneNumController.dispose();
     focusNameNode.dispose();
-    focusLocationNode.dispose();
     log('PROFILE DIS');
     super.dispose();
   }
@@ -76,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (state is UserProfileDisplayedState) {
                   nameController.text = state.user.name ;
                   phoneNumController.text = state.user.phoneNumber ;
-                  locationController.text = 'Colombo';}
+                 }
 
                 // updated profile succcess / error
                 if (state is UserProfileSuccessState) {
@@ -87,6 +88,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     icon: Icons.check_circle_outline,
                   );
                 } else if (state is UserProfileErrorState) {
+                  CustomToast.show(
+                    context: context,
+                    message: state.errorMessage,
+                    bgColor : Theme.of(context).colorScheme.error,
+                    icon: Icons.error_outline,
+                  );
+                }
+  }),
+  BlocListener<LocationBloc, LocationState>(
+              listener: (context, state) {
+               if (!mounted) return;
+                // displaying user location data
+                // real time!
+                if (state is LocationLoadedState) {
+                  log("Location LOADED STATE");
+                  locationController.text = state.cityName!;}
+
+                  // error message
+                else if (state is LocationErrorState) {
+                   log("Location ERROR STATE");
                   CustomToast.show(
                     context: context,
                     message: state.errorMessage,
@@ -210,19 +231,19 @@ class _ProfilePageState extends State<ProfilePage> {
           SizedBox(height: 3),
           CustomProfileTextField(
             controller: locationController,
-            focusNode: focusLocationNode,
-            icon: isLocationFocused ?
-            IconButton(
-              icon: Icon(Icons.check, color: AppColours.primary),
-              onPressed: () {
-                context.read<UserProfileBloc>().add(
-                  UserProfileUpdatedEvent(values: {
-                    'location': locationController.text,
-                  }),
-                );
-                locationController.clear();
-              },
-            ) : null,
+           //  focusNode: focusLocationNode,
+            // icon: isLocationFocused ?
+            // IconButton(
+            //   icon: Icon(Icons.check, color: AppColours.primary),
+            //   onPressed: () {
+            //     context.read<UserProfileBloc>().add(
+            //       UserProfileUpdatedEvent(values: {
+            //         'location': locationController.text,
+            //       }),
+            //     );
+            //     locationController.clear();
+            //   },
+            // ) : null,
           ),
           const SizedBox(height: 15),
           Text('Phone Number', style: TextStyle(fontSize: 15)),
