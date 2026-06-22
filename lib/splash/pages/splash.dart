@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 
 class SplashPage extends StatefulWidget {
@@ -18,11 +20,14 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(seconds: 3), () {
-      log('SPLASH -> LOGIN');
-      // navigating to the next page after the timer ends
-      context.goNamed(RouteConstants.login);
-    });
+    context.read<AuthBloc>().add(
+        CheckAuthStatusEvent(),);  
+
+// navigating to the next page after the 3s timer ends
+    //_timer = Timer(const Duration(seconds: 3), () {});
+      log('SPLASH -> LOGIN');  
+      
+      // context.goNamed(RouteConstants.login);
   }
 
   @override
@@ -34,7 +39,32 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthAuthenticatedState)
+          {
+            _timer = Timer(const Duration(seconds: 3), () {
+            if (mounted){
+             log('SPLASH -> HOME');
+            context.goNamed(RouteConstants.home);
+            }
+          }
+          );
+          }
+          if (state is AuthUnauthenticatedState)
+          {
+            _timer = Timer(const Duration(seconds: 3), () {
+            if (mounted){
+             log('SPLASH -> LOg');
+            context.goNamed(RouteConstants.login);
+            }
+          }
+          );
+          }
+        },
+
+      
+      child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -44,7 +74,7 @@ class _SplashPageState extends State<SplashPage> {
             ],
           ),
         ),
-    );
+    ));
   }
 }
 
