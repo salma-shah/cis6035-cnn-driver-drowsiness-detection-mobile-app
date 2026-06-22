@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
+import 'package:sleepy_driver/location/viewmodels/bloc/location_bloc.dart';
 import 'package:sleepy_driver/styles/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sleepy_driver/firebase_options.dart';
@@ -19,6 +20,7 @@ void main() async {
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => UserProfileBloc()),
+        BlocProvider(create: (context) => LocationBloc()),
       ],
       child: MyApp(),
     ));
