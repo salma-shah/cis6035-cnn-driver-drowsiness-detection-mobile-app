@@ -1,13 +1,32 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sleepy_driver/location/viewmodels/bloc/location_bloc.dart';
 import 'package:sleepy_driver/shared/custom_widgets/button.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/home/custom_widgets/card.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+   void initState() {
+    super.initState(); 
+
+// loading location event
+    log("LOCATION IN HOME INIT");
+    context.read<LocationBloc>().add(
+    LocationDisplayedEvent(),
+  ); 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +49,7 @@ class HomePage extends StatelessWidget {
       ),
     );
 }
-  
+
   _buildHeader(BuildContext context) {
      return Container(
     alignment: Alignment.center,
@@ -41,14 +60,42 @@ class HomePage extends StatelessWidget {
           Icon(Icons.location_on_outlined, 
           color: AppColours.primary,
          size: 25.0,),                            
-          Text(   
+          
+        BlocBuilder<LocationBloc, LocationState>(
+        builder: (context, state) {
+         // if (!mounted) return;
+                // displaying user location data
+                // real time!
+            if (state is LocationLoadedState) {
+                  log("Location LOADED HOME STATE");
+                   return Text(
+                    state.cityName!,   
             // location
-          'Polannaruwa',
           style: TextStyle(
           fontSize: 14,
           color: Theme.of(context).primaryColor,                            
           ), 
-          ),
+          );
+                  }
+                  // error message
+                // else if (state is LocationErrorState) {
+                //    log("Location ERROR HOME STATE");
+                //   CustomToast.show(
+                //     context: context,
+                //     message: state.errorMessage,
+                //     bgColor : Theme.of(context).colorScheme.error,
+                //     icon: Icons.error_outline,
+                //   );
+                // }
+          return Text(  
+            'Loading...' ,
+            // location
+          style: TextStyle(
+          fontSize: 14,
+          color: Theme.of(context).primaryColor,                            
+          ), 
+          );
+  },),
           ],
            ),
            SizedBox(height: 10),
@@ -117,7 +164,7 @@ class HomePage extends StatelessWidget {
     ),  
   );
   }
-  
+
   _buildBody(BuildContext context) {
     return GridView.count(
       shrinkWrap: true,
