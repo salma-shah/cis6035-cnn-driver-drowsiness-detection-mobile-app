@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sleepy_driver/auth/custom_widgets/toast.dart';
 import 'package:sleepy_driver/location/viewmodels/bloc/location_bloc.dart';
 import 'package:sleepy_driver/shared/custom_widgets/button.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
@@ -10,23 +11,8 @@ import 'package:sleepy_driver/home/custom_widgets/card.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-   void initState() {
-    super.initState(); 
-
-// loading location event
-    log("LOCATION IN HOME INIT");
-    context.read<LocationBloc>().add(
-    LocationDisplayedEvent(),
-  ); 
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +35,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 }
-
+  
   _buildHeader(BuildContext context) {
      return Container(
     alignment: Alignment.center,
@@ -164,7 +150,7 @@ class _HomePageState extends State<HomePage> {
     ),  
   );
   }
-
+  
   _buildBody(BuildContext context) {
     return GridView.count(
       shrinkWrap: true,
