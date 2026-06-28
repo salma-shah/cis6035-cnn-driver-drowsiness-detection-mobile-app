@@ -29,11 +29,7 @@ class AppRouter{
       GoRoute(name: RouteConstants.splash, path: '/splash', builder: (context, state) => const SplashPage()),
       GoRoute(name: RouteConstants.signUp, path: '/signup', builder: (context, state) => const SignUpPage()),
       GoRoute(name: RouteConstants.login, path: '/login', builder: (context, state) => const LoginPage()),
-      GoRoute(name: RouteConstants.home, path: '/home', builder: (context, state) 
-      {
-         context.read<LocationBloc>().add(LocationDisplayedEvent());
-        return HomePage();
-      },),
+      GoRoute(name: RouteConstants.home, path: '/home', builder: (context, state) => const HomePage()),
       // GoRoute(name: RouteConstants.profile, path: '/profile', builder: (context, state) => const ProfilePage()), 
       // GoRoute(name: RouteConstants.mildFatigue, path: '/mild-fatigue', builder: (context, state) => MildFatiguePage()),
       GoRoute(name: RouteConstants.modFatigue, path: '/mod-fatigue', builder: (context, state) => ModFatigue(),),
