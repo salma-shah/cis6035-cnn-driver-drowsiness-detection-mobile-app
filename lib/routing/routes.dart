@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/auth/pages/login.dart';
 import 'package:sleepy_driver/auth/pages/sign_up.dart';
@@ -9,7 +8,6 @@ import 'package:sleepy_driver/dashboard/pages/safety_dashboard.dart';
 import 'package:sleepy_driver/fatigue_alerts/pages/mild_fatigue.dart';
 import 'package:sleepy_driver/fatigue_alerts/pages/mod_fatigue.dart';
 import 'package:sleepy_driver/fatigue_alerts/pages/severe_fatigue.dart';
-import 'package:sleepy_driver/location/viewmodels/bloc/location_bloc.dart';
 import 'package:sleepy_driver/splash/pages/splash.dart';
 import 'package:sleepy_driver/home/pages/home.dart';
 import 'package:sleepy_driver/nav_bar/layout.dart';
