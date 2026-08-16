@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/auth/custom_widgets/text_field.dart';
-import 'package:sleepy_driver/custom_widgets/button.dart';
+import 'package:sleepy_driver/shared/custom_widgets/button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
 import 'package:sleepy_driver/auth/custom_widgets/toast.dart';
@@ -29,6 +29,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    log('LOGIN PAGE BUILD');
+    log('Current route: ${GoRouterState.of(context).uri}');
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -64,8 +66,8 @@ class _LoginPageState extends State<LoginPage> {
               icon: Icons.check_circle_outline,
               bgColor: AppColours.success,
               );
-              context.pushNamed(RouteConstants.home);
-          } 
+              context.goNamed(RouteConstants.home);
+          }
         },
           builder: (context, state) {
           final isLoading = state is AuthLoadingState;

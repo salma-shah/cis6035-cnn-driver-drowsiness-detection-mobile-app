@@ -28,8 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
   // focus nodes
   final FocusNode focusNameNode = FocusNode();
   bool isNameFocused = false;
-  // final FocusNode focusLocationNode = FocusNode();
-  // bool isLocationFocused = false;
 
    @override
   void initState() {
@@ -70,8 +68,8 @@ class _ProfilePageState extends State<ProfilePage> {
         listeners: [
            BlocListener<UserProfileBloc, UserProfileState>(
               listener: (context, state) {
-                log("Init state just got hit second time");
-                 log('USER PROFILE STATE: ${state.runtimeType}');
+               // log("Init state just got hit second time");
+             //    log('USER PROFILE STATE: ${state.runtimeType}');
                 if (!mounted) return;
                 // displaying user profile data
                 if (state is UserProfileDisplayedState) {

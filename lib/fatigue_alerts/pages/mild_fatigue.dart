@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:developer';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sleepy_driver/shared/custom_widgets/button.dart';
+import 'package:vibration/vibration.dart';
+import 'package:vibration/vibration_presets.dart';
 
 class MildFatiguePage extends StatelessWidget
 {
@@ -58,7 +61,14 @@ class MildFatiguePage extends StatelessWidget
         SizedBox(height: 60.0),
         CustomGeneralButton(
           text: 'Wake Up',
-         onPressed: () {}, 
+         onPressed: () async {
+          // checking if phone has vibrator
+          if (await Vibration.hasVibrator())
+          {
+            log("LETS VIBE");
+            Vibration.vibrate(preset: VibrationPreset.doubleBuzz);
+          }
+         }, 
         bgColor: Theme.of(context).colorScheme.secondary,
         txtColor: Theme.of(context).colorScheme.primary),
     // wake up button

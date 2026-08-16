@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/auth/custom_widgets/text_field.dart';
-import 'package:sleepy_driver/custom_widgets/button.dart';
+import 'package:sleepy_driver/shared/custom_widgets/button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
 import 'package:sleepy_driver/auth/custom_widgets/toast.dart';
@@ -27,6 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool otpSent = false;
   bool isLoading = false;
   String verificationId = '';
+  Map<String, String> params = const <String ,String>{};
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,19 @@ class _SignUpPageState extends State<SignUpPage> {
               icon: Icons.check_circle_outline,
               bgColor: AppColours.success,
             );
-              context.pushNamed(RouteConstants.home);
+            if (mounted)
+            {
+              context.pushNamed(RouteConstants.profile);
+            }
+            else 
+            {
+              CustomToast.show(
+              context: context,
+              message: 'Something went wrong, we apologize!',
+              icon: Icons.error_outline,
+              bgColor: AppColours.error,
+            );
+            }
           }
         },
           builder: (context, state) {
