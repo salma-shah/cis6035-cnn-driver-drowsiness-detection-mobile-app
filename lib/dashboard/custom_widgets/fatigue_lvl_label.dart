@@ -33,7 +33,7 @@ switch (fatigueSeverity) {
     break;
     case FatigueSeverity.severe:
     lblBgColor = Color(0xFFFF2A2E);
-    txtColor = Colors.black; 
+    txtColor = Color(0xFFFF0004);; 
     borderColor = Color(0xFFFF0004);
     text = "Extreme";
     break;
