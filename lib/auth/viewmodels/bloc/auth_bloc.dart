@@ -17,7 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEvent>((event, emit) {});
 
      on<OtpSentEvent>((event, emit) async {
-      // log("EVENT WAS RECEIVED");
+       log("EVENT WAS RECEIVED");
       emit(AuthLoadingState(isLoading: true));
       try {
         // checking if phone exists
@@ -69,7 +69,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit (AuthLoadingState(isLoading: true));
       try {
         await authRepo.logOut();
-        emit(AuthInitialState());
+        emit(AuthLoggedOutState());
       } catch (e) 
       {
         log('Error logging out: $e');
@@ -80,12 +80,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthLoadingState(isLoading: true));
         try {
           await authRepo.deleteUserAccount();
-          emit(AuthInitialState());
+          emit(AuthAccountDeletedState());
         }
         catch (e)
         {
         log('Error logging out: $e');
         emit(AuthErrorState(errorMessage: 'Something went wrong with deleting the account!'));
+        }
+      });
+
+      on<CheckAuthStatusEvent>((event, emit) async {
+        emit(AuthLoadingState(isLoading: true));
+        try {
+          final isLoggedIn = await authRepo.isUserLoggedIn();
+           log('CHECK AUTH');
+ // log('USER UID: ${user?.uid}');
+
+          if (isLoggedIn) {
+            emit(AuthAuthenticatedState());
+          } else {
+            emit(AuthUnauthenticatedState());
+          }
+        } catch (e) {
+          log('Error checking auth status: $e');
+          emit(AuthErrorState(errorMessage: 'Failed to check authentication status'));
         }
       });
 

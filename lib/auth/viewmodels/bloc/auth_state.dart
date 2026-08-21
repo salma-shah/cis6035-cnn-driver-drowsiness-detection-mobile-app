@@ -13,6 +13,14 @@ final class AuthLoadingState extends AuthState {
   const AuthLoadingState({required this.isLoading});   // whether loading or not
 }
 
+// auth & not auth states
+final class AuthAuthenticatedState extends AuthState {}
+final class AuthUnauthenticatedState extends AuthState {}
+
+
+final class AuthLoggedOutState extends AuthState {}
+final class AuthAccountDeletedState extends AuthState {}
+
 final class AuthSuccessState extends AuthState {
   final UserModel user;
   const AuthSuccessState(this.user);

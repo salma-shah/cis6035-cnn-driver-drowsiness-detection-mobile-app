@@ -30,3 +30,5 @@ class OtpVerifiedEvent extends AuthEvent {
   @override
   List<Object> get props => [verificationId, otp];
 }
+
+class CheckAuthStatusEvent extends AuthEvent {}

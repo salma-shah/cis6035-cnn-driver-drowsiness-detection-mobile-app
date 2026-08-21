@@ -28,4 +28,9 @@ class AuthRepo {
   {
     return await authService.logOut();
   }
+
+// checking if user is logged in
+bool isUserLoggedIn() {
+  return authService.currentUser != null;
+}
 }

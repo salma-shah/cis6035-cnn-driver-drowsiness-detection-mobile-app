@@ -55,7 +55,7 @@ class AuthService {
     {
       final user = UserModel(
         userId: firebaseUser.uid,
-        phoneNumber: firebaseUser.phoneNumber,
+        phoneNumber: firebaseUser.phoneNumber ?? '',
         name: name?.trim().isNotEmpty == true ? name!.trim() : 'New User'
       );
 
@@ -90,7 +90,7 @@ class AuthService {
     await firebaseAuth.signOut();
   }
 
-  // // delete account
+   // delete account
   Future<void> deleteUserAccount() async {
   try 
   {
@@ -130,4 +130,8 @@ class AuthService {
   }
 }
 
+// checking if user is logged in
+User? getCurrentUser() {
+  return firebaseAuth.currentUser;
+}
 }
