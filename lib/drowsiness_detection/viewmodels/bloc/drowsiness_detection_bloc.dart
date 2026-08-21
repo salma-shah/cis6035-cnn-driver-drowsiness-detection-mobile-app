@@ -1,12 +1,15 @@
 import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:sleepy_driver/drowsiness_detection/models/drowsiness_result.dart';
 import 'package:sleepy_driver/drowsiness_detection/repos/drowsiness_detection_repo.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_event.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_state.dart';
 
-
 class DrowsinessBloc
     extends Bloc<DrowsinessEvent, DrowsinessState> {
+
   final DrowsinessDetectionRepo repository;
 
   DrowsinessBloc({
@@ -14,6 +17,7 @@ class DrowsinessBloc
   }) : super(
           const DrowsinessState(),
         ) {
+
     on<DrowsinessInitialize>(
       onInitialize,
     );
@@ -39,43 +43,27 @@ class DrowsinessBloc
     DrowsinessInitialize event,
     Emitter<DrowsinessState> emit,
   ) async {
+
     try {
-      
-      log(
-        'BLoC: Initializing drowsiness detection',
-      );
-
+      emit(state.copyWith(status: DrowsinessStatus.initializing,clearError: true));
       await repository.initialize();
-
       final camController = repository.cameraController;
-      if (camController == null)
-      {
-         throw Exception(
-    'Camera initialized but CameraController is null.',
-  );
-}
+      if (camController == null) { throw Exception('Camera initialized but CameraController is null.');
+      }
+
       emit(
         state.copyWith(
-          status: DrowsinessStatus.initializing,
+          status: DrowsinessStatus.ready,
           cameraController: camController,
           clearError: true,
         ),
       );
 
-      emit(
-        state.copyWith(
-          status: DrowsinessStatus.ready,
-          clearError: true,
-        ),
-      );
+      log('BLoC: Drowsiness detection ready.',);
 
-      log(
-        'BLoC: Drowsiness detection ready.',
-      );
-    } catch (e) {
-      log(
-        'BLoC initialization error: $e',
-      );
+    } catch (e, stackTrace) {
+
+      log('BLoC initialization error: $e', stackTrace: stackTrace);
 
       emit(
         state.copyWith(
@@ -90,12 +78,18 @@ class DrowsinessBloc
     DrowsinessStartMonitoring event,
     Emitter<DrowsinessState> emit,
   ) async {
+
     try {
+
       if (!repository.isCameraInitialized) {
         throw Exception(
           'Drowsiness detection is not initialized.',
         );
       }
+
+      log(
+        'BLoC: Starting drowsiness monitoring...',
+      );
 
       emit(
         state.copyWith(
@@ -103,11 +97,14 @@ class DrowsinessBloc
           clearError: true,
         ),
       );
+
       await repository.startMonitoring(
-        onPrediction: (double probability) {
+        onPrediction: (
+          DrowsinessResult result,
+        ) {
           add(
             DrowsinessPredictionReceived(
-              probability,
+              result,
             ),
           );
         },
@@ -119,9 +116,12 @@ class DrowsinessBloc
           );
         },
       );
-    } catch (e) {
+
+    } catch (e, stackTrace) {
+
       log(
         'BLoC start monitoring error: $e',
+        stackTrace: stackTrace,
       );
 
       emit(
@@ -133,12 +133,13 @@ class DrowsinessBloc
     }
   }
 
-
   Future<void> onStopMonitoring(
     DrowsinessStopMonitoring event,
     Emitter<DrowsinessState> emit,
   ) async {
+
     try {
+
       log(
         'BLoC: Stopping drowsiness monitoring...',
       );
@@ -148,9 +149,11 @@ class DrowsinessBloc
       emit(
         state.copyWith(
           status: DrowsinessStatus.stopped,
-            probability: 0.0,
-        isDrowsy: false,
-        label: 'Normal',
+          probability: 0.0,
+          ear: null,
+          mar: null,
+          isDrowsy: false,
+          label: 'Normal',
           clearError: true,
         ),
       );
@@ -158,9 +161,12 @@ class DrowsinessBloc
       log(
         'BLoC: Drowsiness monitoring stopped.',
       );
-    } catch (e) {
+
+    } catch (e, stackTrace) {
+
       log(
         'BLoC stop monitoring error: $e',
+        stackTrace: stackTrace,
       );
 
       emit(
@@ -172,25 +178,22 @@ class DrowsinessBloc
     }
   }
 
-
   void onPredictionReceived(
     DrowsinessPredictionReceived event,
     Emitter<DrowsinessState> emit,
   ) {
-    final probability = event.probability;
 
-    final isDrowsy = probability > 0.5;
-
-    final label = isDrowsy
-        ? 'Drowsy'
-        : 'Non Drowsy';
+    final result = event.result;
 
     emit(
       state.copyWith(
         status: DrowsinessStatus.monitoring,
-        probability: probability,
-        isDrowsy: isDrowsy,
-        label: label,
+        probability:result.probability,   // passes the relevant results
+        ear:result.ear, 
+        mar: result.mar,
+        isDrowsy: result.isDrowsy,
+        label:result.label,   // and drowsy / non drowsy label
+        severity: result.severity,
         clearError: true,
       ),
     );
@@ -200,6 +203,7 @@ class DrowsinessBloc
     DrowsinessErrorOccurred event,
     Emitter<DrowsinessState> emit,
   ) {
+
     log(
       'BLoC: Detection error: ${event.message}',
     );

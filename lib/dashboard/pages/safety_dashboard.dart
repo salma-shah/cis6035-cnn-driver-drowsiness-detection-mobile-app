@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:sleepy_driver/dashboard/custom_widgets/fatigue_lvl_label.dart';
-import 'package:sleepy_driver/dashboard/fatigue_severity.dart';
+import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_bloc.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_event.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_state.dart';
@@ -28,14 +28,13 @@ class _SafetyDashboardPageState
     super.initState();
 
     // initialize drowsiness detection
-    // when the page is created.
+    // when the page is created
     context.read<DrowsinessBloc>().add(
           const DrowsinessInitialize(),
         );
   }
 
   // start and end detection when the btn is clicked
-
   void startDriverMonitoring() {
     context.read<DrowsinessBloc>().add(
           const DrowsinessStartMonitoring(),
@@ -47,7 +46,6 @@ class _SafetyDashboardPageState
           const DrowsinessStopMonitoring(),
         );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +204,6 @@ Widget _buildCameraPreview(
               controller,
             ),
 
-            // FATIGUE LABEL
             Positioned(
               bottom: 24,
               left: 24,
@@ -225,38 +222,15 @@ Widget _buildCameraPreview(
 Widget _buildFatigueLabel(
   DrowsinessState state,
 ) {
-  // displaying normal as default 
   if (state.status != DrowsinessStatus.monitoring) {
     return const FatigueLevelLabel(
       fatigueSeverity: FatigueSeverity.normal,
     );
   }
 
-  final severity = _getFatigueSeverity(
-    state.probability,
-  );
-
   return FatigueLevelLabel(
-    fatigueSeverity: severity,
+    fatigueSeverity:
+        state.severity ?? FatigueSeverity.normal,
   );
 }
-
-  FatigueSeverity _getFatigueSeverity(
-    double probability,
-  ) {
-    if (probability >= 0.9) {
-      return FatigueSeverity.severe;
-    }
-
-    if (probability >= 0.7) {
-      return FatigueSeverity.moderate;
-    }
-
-    if (probability >=0.5) {
-    return FatigueSeverity.mild;
-  }
-  return FatigueSeverity.normal;
-
-  }
-
 }

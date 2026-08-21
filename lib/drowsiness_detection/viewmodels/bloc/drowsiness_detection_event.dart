@@ -1,4 +1,6 @@
 
+import 'package:sleepy_driver/drowsiness_detection/models/drowsiness_result.dart';
+
 abstract class DrowsinessEvent {
   const DrowsinessEvent();
   List<Object?> get props => [];
@@ -17,14 +19,11 @@ class DrowsinessStopMonitoring extends DrowsinessEvent {
 }
 
 class DrowsinessPredictionReceived extends DrowsinessEvent {
-  final double probability;
+  final DrowsinessResult result;
 
   const DrowsinessPredictionReceived(
-    this.probability,
+    this.result,
   );
-
-  @override
-  List<Object?> get props => [probability];
 }
 
 class DrowsinessErrorOccurred extends DrowsinessEvent {
