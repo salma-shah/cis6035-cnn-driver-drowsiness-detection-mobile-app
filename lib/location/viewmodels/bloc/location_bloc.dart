@@ -37,3 +37,66 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   }
 }
+
+
+// class LocationBloc extends Bloc<LocationEvent, LocationState> {
+//   final LocationRepo locationRepo;
+
+//   Timer? _locationTimer;
+
+//   LocationBloc({
+//     required this.locationRepo,
+//   }) : super(LocationInitialState()) {
+
+//     on<LocationDisplayedEvent>(onLocationDisplayed);
+
+//     // Start periodic location updates
+//     _locationTimer = Timer.periodic(
+//       const Duration(minutes: 5),
+//       (_) {
+//         add(LocationDisplayedEvent());
+//       },
+//     );
+//   }
+
+//   Future<void> onLocationDisplayed(
+//     LocationDisplayedEvent event,
+//     Emitter<LocationState> emit,
+//   ) async {
+//     log("LOCATION DISPLAYED EVENT RECEIVED");
+
+//     try {
+//       final locationDisplayed =
+//           await locationRepo.getCurrentCity();
+
+//       if (locationDisplayed != null) {
+//         log("Location is going to be displayed");
+
+//         emit(
+//           LocationLoadedState(locationDisplayed),
+//         );
+//       } else {
+//         log("Location is not going to be displayed");
+
+//         emit(
+//           LocationErrorState(
+//             errorMessage:
+//                 'Location could not be displayed.',
+//           ),
+//         );
+//       }
+//     } catch (e) {
+//       emit(
+//         LocationErrorState(
+//           errorMessage: e.toString(),
+//         ),
+//       );
+//     }
+//   }
+
+//   @override
+//   Future<void> close() {
+//     _locationTimer?.cancel();
+//     return super.close();
+//   }
+// }
