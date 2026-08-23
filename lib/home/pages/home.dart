@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
         text: 'User Manual',
         ),
         HomeCard(onTap: () {
-         //  context.pushNamed(RouteConstants.userManualPg1);
+          context.pushNamed(RouteConstants.safetySuggestions);
         },
         svgPath: 'assets/images/img_suggestions.svg',
         text: 'Suggestions',
