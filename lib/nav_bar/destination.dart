@@ -12,15 +12,15 @@ class Destination {
 
 // array of destinations
 final destinations = [
+  Destination(icon: 
+    SvgPicture.asset(
+        'assets/images/img_home.svg',
+        width: 36, height: 36, semanticsLabel: 'Home'), label: 'Home'),
   Destination(
     icon: SvgPicture.asset(
       'assets/images/img_dashboard.svg',
       width: 36, height: 36, semanticsLabel: 'Safety Dashboard',
     ), label: 'Safety Dashboard'),
-    Destination(icon: 
-    SvgPicture.asset(
-        'assets/images/img_suggestions.svg',
-        width: 36, height: 36, semanticsLabel: 'Suggestions'), label: 'Suggestions'),
     Destination(
     icon: SvgPicture.asset(
       'assets/images/img_profile.svg',
