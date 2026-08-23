@@ -2,51 +2,60 @@ import 'package:audioplayers/audioplayers.dart';
 
 class AudioService {
   final AudioPlayer player = AudioPlayer();
-  bool isInitalized = false;
-  bool isPlaying = false;
+  bool _initialized = false;
+  bool get isInitialized => _initialized;
 
   Future<void> initialize() async {
-    if (isInitalized) return;
-    await player.setReleaseMode(ReleaseMode.loop);
-   isInitalized = true;
+    if (_initialized) {
+      return;
+    }
+
+    await player.setReleaseMode(
+      ReleaseMode.loop,
+    );
+
+    _initialized = true;
   }
 
-   Future<void> playMild() async {
-    // if (isPlaying) return;
-    // isPlaying = true;
+// diff alarms based oon severity levels
+  Future<void> playMild() async {
     await initialize();
+
+    await player.stop();
+
     await player.play(
       AssetSource('alarms/mild_alarm.mp3'),
     );
   }
 
   Future<void> playWarning() async {
-    //if (isPlaying) return;
-   // isPlaying = true;
     await initialize();
+
+    await player.stop();
+
     await player.play(
       AssetSource('alarms/warning_alarm.mp3'),
     );
   }
 
   Future<void> playCritical() async {
-    // await stop();
-    // isPlaying = true;
     await initialize();
+
+    await player.stop();
+
     await player.play(
       AssetSource('alarms/critical_alarm.mp3'),
     );
   }
 
+// stop alarms
   Future<void> stop() async {
-  //  if (!isPlaying) return;
-
     await player.stop();
-
-   // isPlaying = false;
   }
 
   Future<void> dispose() async {
+    await player.stop();
     await player.dispose();
+    _initialized = false;
   }
 }
