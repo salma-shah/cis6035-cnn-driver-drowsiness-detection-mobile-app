@@ -10,6 +10,8 @@ class DrowsinessResult {
 
   final FatigueSeverity severity;
 
+ // final Uint8List? debugImage;
+
   const DrowsinessResult({
     required this.probability,
     required this.ear,
@@ -17,5 +19,6 @@ class DrowsinessResult {
     required this.isDrowsy,
     required this.label,
     required this.severity,
+  //  required this.debugImage
   });
 }

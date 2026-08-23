@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_bloc.dart';
+import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_event.dart';
 import 'package:sleepy_driver/shared/custom_widgets/button.dart';
 
 class ModFatigue extends StatelessWidget
@@ -58,10 +62,15 @@ class ModFatigue extends StatelessWidget
         SizedBox(height: 60.0),
         CustomGeneralButton(
           text: 'Stay Alert',
-         onPressed: () {}, 
+         onPressed: () {
+            context.read<DrowsinessBloc>().add(
+              const DrowsinessAlarmDismissed()  // dismisses the alarm
+            );
+            context.pop();
+          },
         bgColor: Theme.of(context).colorScheme.primary,
         txtColor: Theme.of(context).colorScheme.secondary,
-        borderColor: Theme.of(context).colorScheme.primary,),
+        borderColor: Theme.of(context).colorScheme.primary),
     // wake up button
       ],
     );

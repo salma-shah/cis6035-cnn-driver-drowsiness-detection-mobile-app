@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sleepy_driver/alarm_system/helpers/create_alarm_facade.dart';
 import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
 import 'package:sleepy_driver/drowsiness_detection/helpers/drowsiness_detection_dep.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_bloc.dart';
@@ -23,7 +24,7 @@ void main() async {
         BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => UserProfileBloc()),
         BlocProvider(create: (context) => LocationBloc()),
-        BlocProvider(create: (context) => DrowsinessBloc( repository: createDrowsinessRepository())),
+        BlocProvider(create: (context) => DrowsinessBloc(repository: createDrowsinessRepository(), alarmFacade:createAlarmFacade())),
       ],
       child: MyApp(),
     ));

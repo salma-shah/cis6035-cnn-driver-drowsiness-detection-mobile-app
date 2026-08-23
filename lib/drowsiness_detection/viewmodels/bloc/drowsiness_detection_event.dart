@@ -36,3 +36,8 @@ class DrowsinessErrorOccurred extends DrowsinessEvent {
   @override
   List<Object?> get props => [message];
 }
+
+class DrowsinessAlarmDismissed
+    extends DrowsinessEvent {
+  const DrowsinessAlarmDismissed();
+}

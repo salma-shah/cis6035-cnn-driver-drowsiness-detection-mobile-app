@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'dart:developer';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_bloc.dart';
+import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_event.dart';
 import 'package:sleepy_driver/shared/custom_widgets/button.dart';
-import 'package:vibration/vibration.dart';
-import 'package:vibration/vibration_presets.dart';
 
 class MildFatiguePage extends StatelessWidget
 {
@@ -61,14 +62,12 @@ class MildFatiguePage extends StatelessWidget
         SizedBox(height: 60.0),
         CustomGeneralButton(
           text: 'Wake Up',
-         onPressed: () async {
-          // checking if phone has vibrator
-          if (await Vibration.hasVibrator())
-          {
-            log("LETS VIBE");
-            Vibration.vibrate(preset: VibrationPreset.doubleBuzz);
-          }
-         }, 
+         onPressed: () {
+            context.read<DrowsinessBloc>().add(
+              const DrowsinessAlarmDismissed() // dismisses the alarm
+            );
+            context.pop();
+          },
         bgColor: Theme.of(context).colorScheme.secondary,
         txtColor: Theme.of(context).colorScheme.primary),
     // wake up button

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_bloc.dart';
+import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_event.dart';
 import 'package:sleepy_driver/shared/custom_widgets/button.dart';
 
 class SevereFatiguePage extends StatelessWidget
@@ -57,7 +61,12 @@ class SevereFatiguePage extends StatelessWidget
         SizedBox(height: 60.0),
         CustomGeneralButton(
           text: 'Get Suggestions',
-         onPressed: () {}, 
+          onPressed: () {
+            context.read<DrowsinessBloc>().add(
+              const DrowsinessAlarmDismissed(),
+            );
+            context.pop();
+          },
         bgColor: Colors.white,
         txtColor: Theme.of(context).colorScheme.error,
         borderColor: Theme.of(context).colorScheme.error),

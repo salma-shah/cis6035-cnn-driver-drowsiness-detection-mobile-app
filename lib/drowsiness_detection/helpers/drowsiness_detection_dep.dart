@@ -27,6 +27,7 @@ DrowsinessDetectionRepo createDrowsinessRepository() {
   return DrowsinessDetectionRepo(
     cameraService: cameraService,
     frameProcessor: frameProcessor,
+    imageProcessor: imageProcessor,
     detector: detector,
     faceLandmarkService: faceLandmarkAnalysis,
     faceMetricsProcessor: faceMetricsProcessor,

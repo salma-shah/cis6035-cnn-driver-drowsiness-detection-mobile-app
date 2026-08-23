@@ -18,8 +18,10 @@ class DrowsinessState {
   final bool isDrowsy;
   final String label;
   final FatigueSeverity? severity;
+  final bool alarmActive;
   final String? errorMessage;
   final CameraController? cameraController;
+//   final Uint8List? debugProcessedImage;
 
   const DrowsinessState({
     this.status = DrowsinessStatus.initial,
@@ -28,8 +30,10 @@ class DrowsinessState {
     this.isDrowsy = false,
     this.label = 'Unknown',
     this.severity,
+    this.alarmActive = false,
     this.errorMessage,
-    this.cameraController
+    this.cameraController,
+   // this.debugProcessedImage
   });
 
   DrowsinessState copyWith({
@@ -40,10 +44,13 @@ class DrowsinessState {
     bool? isDrowsy,
     String? label,
     FatigueSeverity? severity,
+    bool? alarmActive,
     String? errorMessage,
     CameraController? cameraController,
     bool clearError = false,
-    bool clearCameraController = false
+    bool clearCameraController = false,
+   //  Uint8List? debugProcessedImage,
+  //  bool clearDebugImage = false,
   }) {
    return DrowsinessState(
   status: status ?? this.status,
@@ -55,6 +62,7 @@ class DrowsinessState {
   isDrowsy: isDrowsy ?? this.isDrowsy,
   label: label ?? this.label,
   severity: severity ?? this.severity,
+  alarmActive: alarmActive ?? this.alarmActive,
 
   errorMessage: clearError
       ? null
@@ -63,6 +71,9 @@ class DrowsinessState {
   cameraController: clearCameraController
       ? null
       : cameraController ?? this.cameraController,
+      //  debugProcessedImage:
+      //     clearDebugImage
+      //         ? null : debugProcessedImage ?? this.debugProcessedImage,
 );
   }
 

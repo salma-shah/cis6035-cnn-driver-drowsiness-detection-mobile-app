@@ -1,12 +1,14 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:sleepy_driver/dashboard/custom_widgets/fatigue_lvl_label.dart';
 import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_bloc.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_event.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_state.dart';
+import 'package:sleepy_driver/routing/route_constants.dart';
 
 import 'package:sleepy_driver/shared/custom_widgets/button.dart';
 
@@ -27,41 +29,94 @@ class _SafetyDashboardPageState
   void initState() {
     super.initState();
 
-    // initialize drowsiness detection
-    // when the page is created
     context.read<DrowsinessBloc>().add(
-          const DrowsinessInitialize(),
-        );
+      const DrowsinessInitialize(),
+    );
   }
 
-  // start and end detection when the btn is clicked
+// start and end drowsiness blocs
   void startDriverMonitoring() {
     context.read<DrowsinessBloc>().add(
-          const DrowsinessStartMonitoring(),
-        );
+      const DrowsinessStartMonitoring(),
+    );
   }
 
   void endDriverMonitoring() {
     context.read<DrowsinessBloc>().add(
-          const DrowsinessStopMonitoring(),
-        );
+      const DrowsinessStopMonitoring(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<DrowsinessBloc, DrowsinessState>(
+      listenWhen: (previous, current) {
+
+        // error changed
+        if (previous.status != DrowsinessStatus.error &&
+            current.status == DrowsinessStatus.error) {
+          return true;
+        }
+
+        // new alarm becomes active
+        if (!previous.alarmActive &&
+            current.alarmActive) {
+          return true;
+        }
+
+        return false;
+      },
+
       listener: (context, state) {
-        if (state.status == DrowsinessStatus.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
+
+        if (state.status ==
+            DrowsinessStatus.error) {
+
+          ScaffoldMessenger.of(context)
+              .showSnackBar(
             SnackBar(
               content: Text(
                 state.errorMessage ??
-                    'Drowsiness detection error',
+                    'Something went wrong.',
               ),
             ),
           );
+
+          return;
+        }
+
+        // alarms based on severity
+        if (!state.alarmActive) {
+          return;
+        }
+
+        final severity =
+            state.severity;
+
+        if (severity == null) {
+          return;
+        }
+
+        // will send to relevant alert screens based on severity
+
+        switch (severity) {
+          case FatigueSeverity.mild:
+            context.pushNamed( RouteConstants.mildFatigue);
+            break;
+
+          case FatigueSeverity.moderate:
+            context.pushNamed(RouteConstants.modFatigue);
+            break;
+
+          case FatigueSeverity.severe:
+            context.pushNamed(RouteConstants.severeFatigue);
+            break;
+
+          case FatigueSeverity.normal:
+            break;
         }
       },
+
       child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
@@ -69,15 +124,25 @@ class _SafetyDashboardPageState
             vertical: 10,
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment:
+                CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 25),
 
-              _buildHeader(context),
+              const SizedBox(
+                height: 25,
+              ),
 
-              const SizedBox(height: 30),
+              _buildHeader(
+                context,
+              ),
 
-              _buildBody(context),
+              const SizedBox(
+                height: 30,
+              ),
+
+              _buildBody(
+                context,
+              ),
             ],
           ),
         ),
@@ -85,21 +150,33 @@ class _SafetyDashboardPageState
     );
   }
 
-
-  Widget _buildHeader(BuildContext context) {
-    return BlocBuilder<DrowsinessBloc, DrowsinessState>(
-      buildWhen: (previous, current) {
-        return previous.status != current.status;
+  Widget _buildHeader(
+    BuildContext context,
+  ) {
+    return BlocBuilder<
+        DrowsinessBloc,
+        DrowsinessState>(
+      buildWhen: (
+        previous,
+        current,
+      ) {
+        return previous.status !=
+            current.status;
       },
-      builder: (context, state) {
+
+      builder: (
+        context,
+        state,
+      ) {
+
         final isMonitoring =
-            state.status == DrowsinessStatus.monitoring;
+            state.status ==
+                DrowsinessStatus.monitoring;
 
         final isInitializing =
             state.status ==
                 DrowsinessStatus.initializing;
 
-// btn to toggle between starting and ending trip aka detection
         return Container(
           alignment: Alignment.center,
           child: CustomGeneralButton(
@@ -108,6 +185,7 @@ class _SafetyDashboardPageState
                 : 'Start Trip',
 
             onPressed: () {
+
               if (isInitializing) {
                 return;
               }
@@ -134,103 +212,140 @@ class _SafetyDashboardPageState
     );
   }
 
-Widget _buildBody(BuildContext context) {
-  return BlocBuilder<DrowsinessBloc, DrowsinessState>(
-    builder: (context, state) {
+  Widget _buildBody(
+    BuildContext context,
+  ) {
+    return BlocBuilder<
+        DrowsinessBloc,
+        DrowsinessState>(
+      builder: (
+        context,
+        state,
+      ) {
 
-      if (state.status == DrowsinessStatus.initializing) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
+        if (state.status ==
+            DrowsinessStatus.initializing) {
+          return const Center(
+            child:
+                CircularProgressIndicator(),
+          );
+        }
 
-      if (state.status == DrowsinessStatus.error) {
-        return Center(
-          child: Text(
-            state.errorMessage ??
-                'Something went wrong',
-            textAlign: TextAlign.center,
-          ),
-        );
-      }
+        if (state.status ==
+            DrowsinessStatus.error) {
+          return Center(
+            child: Text(
+              state.errorMessage ??
+                  'Something went wrong.',
+              textAlign:
+                  TextAlign.center,
+            ),
+          );
+        }
 
-      final controller = state.cameraController;
-      if (controller == null) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _buildCameraPreview(
-            context,
-            controller,
-            state,
-          ),
+        final controller =
+            state.cameraController;
 
-          const SizedBox(height: 20),
-        ],
-      );
-    },
-  );
-}
+        if (controller == null) {
+          return const Center(
+            child:
+                CircularProgressIndicator(),
+          );
+        }
 
-Widget _buildCameraPreview(
-  BuildContext context,
-  CameraController controller,
-  DrowsinessState state,
-) {
-  return AspectRatio(
-    aspectRatio: 9 / 16,
-    child: Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context)
-              .colorScheme
-              .primary,
-          width: 2,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Stack(
-          fit: StackFit.expand,
+        return Column(
+          mainAxisAlignment:
+              MainAxisAlignment.spaceEvenly,
+
+          crossAxisAlignment:
+              CrossAxisAlignment.center,
+
           children: [
-            // CAMERA
-            CameraPreview(
+
+            _buildCameraPreview(
+              context,
               controller,
+              state,
             ),
 
-            Positioned(
-              bottom: 24,
-              left: 24,
-              right: 24,
-              child: _buildFatigueLabel(
-                state,
-              ),
+            const SizedBox(
+              height: 20,
             ),
           ],
-        ),
-      ),
-    ),
-  );
-}
-
-Widget _buildFatigueLabel(
-  DrowsinessState state,
-) {
-  if (state.status != DrowsinessStatus.monitoring) {
-    return const FatigueLevelLabel(
-      fatigueSeverity: FatigueSeverity.normal,
+        );
+      },
     );
   }
 
-  return FatigueLevelLabel(
-    fatigueSeverity:
-        state.severity ?? FatigueSeverity.normal,
-  );
-}
+  Widget _buildCameraPreview(
+    BuildContext context,
+    CameraController controller,
+    DrowsinessState state,
+  ) {
+    return AspectRatio(
+      aspectRatio: 9 / 16,
+
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color:
+                Theme.of(context)
+                    .colorScheme
+                    .primary,
+            width: 2,
+          ),
+
+          borderRadius:
+              BorderRadius.circular(10),
+        ),
+
+        child: ClipRRect(
+          borderRadius:
+              BorderRadius.circular(8),
+
+          child: Stack(
+            fit: StackFit.expand,
+
+            children: [
+
+              CameraPreview(
+                controller,
+              ),
+
+              Positioned(
+                bottom: 24,
+                left: 24,
+                right: 24,
+
+                child:
+                    _buildFatigueLabel(
+                  state,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // fatigue label at bottom of screen
+  Widget _buildFatigueLabel(
+    DrowsinessState state,
+  ) {
+
+    if (state.status !=
+        DrowsinessStatus.monitoring) {
+
+      return const FatigueLevelLabel(
+        fatigueSeverity:
+            FatigueSeverity.normal,
+      );
+    }
+    return FatigueLevelLabel(
+      fatigueSeverity:
+          state.severity ??
+              FatigueSeverity.normal,
+    );
+  }
 }
