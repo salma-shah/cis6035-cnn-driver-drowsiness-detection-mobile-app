@@ -28,7 +28,7 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
       }
       catch (e)
       {
-        emit(UserProfileErrorState(errorMessage: e.toString()));
+        emit(UserProfileErrorState(errorMessage: 'Something went wrong. We apologize.'));
       }
     });
 
@@ -53,7 +53,7 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
       }
       catch (e)
       {
-        emit(UserProfileErrorState(errorMessage: e.toString()));
+        emit(UserProfileErrorState(errorMessage: 'Something went wrong. We apologize.'));
       }
     });
   }
