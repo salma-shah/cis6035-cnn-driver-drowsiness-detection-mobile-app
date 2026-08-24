@@ -16,7 +16,7 @@ class RouteConstants {
 
   // nav bar routes
   static const String profile = 'profile';
-  static const String suggestions = 'suggestions';
+  static const String safetySuggestions = 'safetySuggestions';
   static const String safetyDashboard = 'safetyDashboard';
 
 }
