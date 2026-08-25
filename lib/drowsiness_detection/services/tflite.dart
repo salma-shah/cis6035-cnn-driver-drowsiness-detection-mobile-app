@@ -2,7 +2,6 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 
 class TfliteService {
   late Interpreter interpreter;
-
   bool isLoaded = false;
 
   /// load TFLite model

@@ -7,7 +7,6 @@ class FaceLandmarkService {
   bool _isInitialized = false;
 
   bool get isInitialized => _isInitialized;
-
   Future<void> initialize() async {
     if (_isInitialized) {
       return;
@@ -24,9 +23,7 @@ class FaceLandmarkService {
         outputTransformationMatrix: false,
       ),
     );
-
     _isInitialized = true;
-
     log('MediaPipe Face Landmarker initialized.');
   }
 
@@ -69,11 +66,8 @@ class FaceLandmarkService {
     if (!_isInitialized) {
       return;
     }
-
     KwonMediapipeLandmarker.dispose();
-
     _isInitialized = false;
-
     log('MediaPipe Face Landmarker disposed.');
   }
 }
