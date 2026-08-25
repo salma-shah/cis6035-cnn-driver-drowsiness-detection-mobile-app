@@ -173,13 +173,13 @@ class _HomePageState extends State<HomePage> {
       mainAxisSpacing: 20,
       children: [
         HomeCard(onTap: () {
-          context.pushNamed(RouteConstants.profile);
+          context.goNamed(RouteConstants.profile);
         },
         svgPath: 'assets/images/img_profile.svg',
         text: 'Profile',
         ),
         HomeCard(onTap: () {
-          context.pushNamed(RouteConstants.safetyDashboard);
+          context.goNamed(RouteConstants.safetyDashboard);
         },
         svgPath: 'assets/images/img_dashboard.svg',
         text:'Safety Dashboard',
