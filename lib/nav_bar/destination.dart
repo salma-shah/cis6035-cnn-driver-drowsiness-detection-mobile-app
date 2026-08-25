@@ -15,7 +15,7 @@ final destinations = [
   Destination(icon: 
     SvgPicture.asset(
         'assets/images/img_home.svg',
-        width: 36, height: 36, semanticsLabel: 'Home'), label: 'Home'),
+        width: 32, height: 32, semanticsLabel: 'Home'), label: 'Home'),
   Destination(
     icon: SvgPicture.asset(
       'assets/images/img_dashboard.svg',
