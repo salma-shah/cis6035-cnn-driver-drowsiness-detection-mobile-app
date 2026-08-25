@@ -251,118 +251,27 @@ Widget _buildBody(BuildContext context) {
             }
           },
         ),
+          Row(
+      mainAxisAlignment: MainAxisAlignment.values[2],
+      children: [
+        Text("Already have an account?"
+        , style: TextStyle(fontSize: 12, color: AppColours.lightText),),
+        TextButton(onPressed: (){
+          context.pushNamed(RouteConstants.login);
+        }, child: Text('Login', 
+        style: TextStyle(fontSize: 13.5, 
+        color: AppColours.lightText, 
+        fontWeight: FontWeight.w700,
+        decoration: TextDecoration.underline,
+        decorationThickness: 1.5),))
+      ],
+    ),
 
         // ...
       ],
     ),
   );
 }
-  // Widget _buildBody(BuildContext context) {
-  //   return Column(
-  //     children: [
-  //       CustomAuthTextField(
-  //         controller: nameController,
-  //         hintText: 'Enter your name...',
-  //         prefixIcon: Icons.person_rounded,
-  //         autovalidateMode: AutovalidateMode.disabled,
-  //           validator: (value) {
-  //         if (value == null || value.toString().trim().isEmpty) {
-  //           return 'Please enter your name';
-  //         }
-  //         return null;
-  //       },
-  //       ),
-  //       SizedBox(height: 20),
-  //      CustomAuthTextField(
-  // controller: phoneController,
-  // hintText: '+94 71 234 5678',
-  // prefixIcon: Icons.phone_rounded,
-  // autovalidateMode: AutovalidateMode.disabled,
-  // validator: (value) {
-  //   if (value == null ||
-  //       value.trim().isEmpty) {
-  //     return 'Please enter the phone number';
-  //   }
-
-  //   final phone =
-  //       value.trim().replaceAll(' ', '');
-
-  //   final sriLankanPhoneRegex =
-  //       RegExp(r'^(?:\+94|0)7\d{8}$');
-
-  //   if (!sriLankanPhoneRegex.hasMatch(phone)) {
-  //     return 'Enter a valid Sri Lankan phone number';
-  //   }
-
-  //   return null;
-  // },
-  //       ),
-  //       SizedBox(height: 20),
-  //       if (otpSent)
-  //         CustomAuthTextField(
-  //           controller: otpController,
-  //           hintText: 'Enter 6-digit OTP...',
-  //           prefixIcon: Icons.verified_user_rounded,
-  //           autovalidateMode: AutovalidateMode.disabled,
-  //           validator: (value) {
-  //          if (value == null || value.toString().trim().isEmpty) {
-  //           return 'Please enter the OTP';
-  //         }
-  //         return null;
-  //       },
-  //         ),
-  //       SizedBox(height: 20),
-  //       CustomGeneralButton(
-  //         text: otpSent ? 'Verify OTP' : 'Sign Up',
-  //         onPressed: () {
-  //         //  if (isLoading) return;
-  //           if (!otpSent) {
-  //             context.read<AuthBloc>().add(
-  //                   OtpSentEvent(
-  //                     phoneNumber: phoneController.text.trim(),
-  //                     isSignUp: true
-  //                   ),
-  //                 );
-  //           } else {
-  //             context.read<AuthBloc>().add( 
-  //                   OtpVerifiedEvent(
-  //                     verificationId: verificationId,
-  //                     otp: otpController.text.trim(), 
-  //                     name: nameController.text  
-  //                   ),
-  //                 );
-  //             log('verificationId: $verificationId, otp: ${otpController.text}');
-  //           }
-  //         },
-  //       ),
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.values[2],
-  //         children: [
-  //           Text(
-  //             "Have an account?",
-  //             style: TextStyle(fontSize: 14, color: AppColours.lightText),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {
-  //               context.pushNamed(RouteConstants.login);
-  //             },
-  //             child: Text(
-  //               'Login',
-  //               style: TextStyle(
-  //                 fontSize: 14.5,
-  //                 color: AppColours.lightText,
-  //                 fontWeight: FontWeight.w700,
-  //                 decoration: TextDecoration.underline,
-  //                 decorationThickness: 1.5,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
-
 
 }
 
