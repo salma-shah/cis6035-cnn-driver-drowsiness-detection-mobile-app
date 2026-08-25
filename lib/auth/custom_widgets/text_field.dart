@@ -8,7 +8,7 @@ class CustomAuthTextField extends StatelessWidget {
   final bool obscureText;
   final TextEditingController? controller;
   final AutovalidateMode autovalidateMode;
-  final FormFieldValidator validator;
+   final FormFieldValidator<String>? validator;
 
   const CustomAuthTextField({
     super.key,
@@ -29,10 +29,11 @@ class CustomAuthTextField extends StatelessWidget {
           fontSize: 14,
         ),
         controller: controller,
+        validator: validator,
+        autovalidateMode:  autovalidateMode,
         obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hintText,
-      
           prefixIcon: Icon(prefixIcon),
       
           filled: true,

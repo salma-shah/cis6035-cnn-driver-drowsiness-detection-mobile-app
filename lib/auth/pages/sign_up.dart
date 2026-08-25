@@ -13,12 +13,12 @@ import 'package:sleepy_driver/auth/custom_widgets/toast.dart';
 // sign up page with phone number, name, and OTP fields
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
-
   @override
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -71,16 +71,16 @@ class _SignUpPageState extends State<SignUpPage> {
             {
               context.pushNamed(RouteConstants.profile);
             }
-            else 
-            {
-              CustomToast.show(
-              context: context,
-              message: 'Something went wrong, we apologize!',
-              icon: Icons.error_outline,
-              bgColor: AppColours.error,
-            );
+            // else 
+            // {
+            //   CustomToast.show(
+            //   context: context,
+            //   message: 'Something went wrong, we apologize!',
+            //   icon: Icons.error_outline,
+            //   bgColor: AppColours.error,
+            // );
             }
-          }
+          
         },
           builder: (context, state) {
             final isLoading = state is AuthLoadingState;
@@ -132,100 +132,238 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-
-  Widget _buildBody(BuildContext context) {
-    return Column(
+Widget _buildBody(BuildContext context) {
+  return Form(
+    key: _formKey,
+    child: Column(
       children: [
         CustomAuthTextField(
           controller: nameController,
           hintText: 'Enter your name...',
           prefixIcon: Icons.person_rounded,
-          autovalidateMode: AutovalidateMode.disabled,
-            validator: (value) {
-          if (value == null || value.toString().trim().isEmpty) {
-            return 'Please enter your name';
-          }
-          return null;
-        },
+          autovalidateMode:
+              AutovalidateMode.disabled,
+          validator: (value) {
+            if (value == null ||
+                value.trim().isEmpty) {
+              return 'Please enter your name';
+            }
+
+            return null;
+          },
         ),
-        SizedBox(height: 20),
+
+        const SizedBox(height: 20),
+
         CustomAuthTextField(
           controller: phoneController,
-         hintText: '+1-234-567-8900',
+          hintText: '+94 71 234 5678',
           prefixIcon: Icons.phone_rounded,
-          autovalidateMode: AutovalidateMode.disabled,
-            validator: (value) {
-          if (value == null || value.toString().trim().isEmpty) {
-            return 'Please enter the phone number';
-          }
-          return null;
-        },
+          autovalidateMode:
+              AutovalidateMode.disabled,
+          validator: (value) {
+            if (value == null ||
+                value.trim().isEmpty) {
+              return 'Please enter the phone number';
+            }
+
+            final phone =
+                value.trim().replaceAll(' ', '');
+
+            final sriLankanPhoneRegex =
+                RegExp(r'^(?:\+94|0)7\d{8}$');
+
+            if (!sriLankanPhoneRegex
+                .hasMatch(phone)) {
+              return 'Enter a valid Sri Lankan phone number';
+            }
+
+            return null;
+          },
         ),
-        SizedBox(height: 20),
+
+        const SizedBox(height: 20),
+
         if (otpSent)
           CustomAuthTextField(
             controller: otpController,
             hintText: 'Enter 6-digit OTP...',
-            prefixIcon: Icons.verified_user_rounded,
-            autovalidateMode: AutovalidateMode.disabled,
+            prefixIcon:
+                Icons.verified_user_rounded,
+            autovalidateMode:
+                AutovalidateMode.disabled,
             validator: (value) {
-           if (value == null || value.toString().trim().isEmpty) {
-            return 'Please enter the OTP';
-          }
-          return null;
-        },
+              if (value == null ||
+                  value.trim().isEmpty) {
+                return 'Please enter the OTP';
+              }
+
+              if (!RegExp(r'^\d{6}$')
+                  .hasMatch(value.trim())) {
+                return 'Enter a valid 6-digit OTP';
+              }
+
+              return null;
+            },
           ),
-        SizedBox(height: 20),
+
+        const SizedBox(height: 20),
+
         CustomGeneralButton(
-          text: otpSent ? 'Verify OTP' : 'Sign Up',
+          text: otpSent
+              ? 'Verify OTP'
+              : 'Sign Up',
           onPressed: () {
-          //  if (isLoading) return;
+            final isValid =
+                _formKey.currentState!
+                    .validate();
+
+            if (!isValid) {
+              return;
+            }
+
             if (!otpSent) {
               context.read<AuthBloc>().add(
-                    OtpSentEvent(
-                      phoneNumber: phoneController.text.trim(),
-                      isSignUp: true
-                    ),
-                  );
+                OtpSentEvent(
+                  phoneNumber:
+                      phoneController.text
+                          .trim(),
+                  isSignUp: true,
+                ),
+              );
             } else {
-              context.read<AuthBloc>().add( 
-                    OtpVerifiedEvent(
-                      verificationId: verificationId,
-                      otp: otpController.text.trim(), 
-                      name: nameController.text  
-                    ),
-                  );
-              log('verificationId: $verificationId, otp: ${otpController.text}');
+              context.read<AuthBloc>().add(
+                OtpVerifiedEvent(
+                  verificationId:
+                      verificationId,
+                  otp:
+                      otpController.text.trim(),
+                  name:
+                      nameController.text.trim(),
+                ),
+              );
+
+              log(
+                'verificationId: '
+                '$verificationId, '
+                'otp: ${otpController.text}',
+              );
             }
           },
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.values[2],
-          children: [
-            Text(
-              "Have an account?",
-              style: TextStyle(fontSize: 14, color: AppColours.lightText),
-            ),
-            TextButton(
-              onPressed: () {
-                context.pushNamed(RouteConstants.login);
-              },
-              child: Text(
-                'Login',
-                style: TextStyle(
-                  fontSize: 14.5,
-                  color: AppColours.lightText,
-                  fontWeight: FontWeight.w700,
-                  decoration: TextDecoration.underline,
-                  decorationThickness: 1.5,
-                ),
-              ),
-            ),
-          ],
-        ),
+
+        // ...
       ],
-    );
-  }
+    ),
+  );
+}
+  // Widget _buildBody(BuildContext context) {
+  //   return Column(
+  //     children: [
+  //       CustomAuthTextField(
+  //         controller: nameController,
+  //         hintText: 'Enter your name...',
+  //         prefixIcon: Icons.person_rounded,
+  //         autovalidateMode: AutovalidateMode.disabled,
+  //           validator: (value) {
+  //         if (value == null || value.toString().trim().isEmpty) {
+  //           return 'Please enter your name';
+  //         }
+  //         return null;
+  //       },
+  //       ),
+  //       SizedBox(height: 20),
+  //      CustomAuthTextField(
+  // controller: phoneController,
+  // hintText: '+94 71 234 5678',
+  // prefixIcon: Icons.phone_rounded,
+  // autovalidateMode: AutovalidateMode.disabled,
+  // validator: (value) {
+  //   if (value == null ||
+  //       value.trim().isEmpty) {
+  //     return 'Please enter the phone number';
+  //   }
+
+  //   final phone =
+  //       value.trim().replaceAll(' ', '');
+
+  //   final sriLankanPhoneRegex =
+  //       RegExp(r'^(?:\+94|0)7\d{8}$');
+
+  //   if (!sriLankanPhoneRegex.hasMatch(phone)) {
+  //     return 'Enter a valid Sri Lankan phone number';
+  //   }
+
+  //   return null;
+  // },
+  //       ),
+  //       SizedBox(height: 20),
+  //       if (otpSent)
+  //         CustomAuthTextField(
+  //           controller: otpController,
+  //           hintText: 'Enter 6-digit OTP...',
+  //           prefixIcon: Icons.verified_user_rounded,
+  //           autovalidateMode: AutovalidateMode.disabled,
+  //           validator: (value) {
+  //          if (value == null || value.toString().trim().isEmpty) {
+  //           return 'Please enter the OTP';
+  //         }
+  //         return null;
+  //       },
+  //         ),
+  //       SizedBox(height: 20),
+  //       CustomGeneralButton(
+  //         text: otpSent ? 'Verify OTP' : 'Sign Up',
+  //         onPressed: () {
+  //         //  if (isLoading) return;
+  //           if (!otpSent) {
+  //             context.read<AuthBloc>().add(
+  //                   OtpSentEvent(
+  //                     phoneNumber: phoneController.text.trim(),
+  //                     isSignUp: true
+  //                   ),
+  //                 );
+  //           } else {
+  //             context.read<AuthBloc>().add( 
+  //                   OtpVerifiedEvent(
+  //                     verificationId: verificationId,
+  //                     otp: otpController.text.trim(), 
+  //                     name: nameController.text  
+  //                   ),
+  //                 );
+  //             log('verificationId: $verificationId, otp: ${otpController.text}');
+  //           }
+  //         },
+  //       ),
+  //       Row(
+  //         mainAxisAlignment: MainAxisAlignment.values[2],
+  //         children: [
+  //           Text(
+  //             "Have an account?",
+  //             style: TextStyle(fontSize: 14, color: AppColours.lightText),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               context.pushNamed(RouteConstants.login);
+  //             },
+  //             child: Text(
+  //               'Login',
+  //               style: TextStyle(
+  //                 fontSize: 14.5,
+  //                 color: AppColours.lightText,
+  //                 fontWeight: FontWeight.w700,
+  //                 decoration: TextDecoration.underline,
+  //                 decorationThickness: 1.5,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
+
+
 }
 
            
