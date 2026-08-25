@@ -11,7 +11,6 @@ class UserProfileDisplayedEvent extends UserProfileEvent{}
 class UserProfileUpdatedEvent extends UserProfileEvent
 {
   final Map<String,dynamic> values;
-
   const UserProfileUpdatedEvent({required this.values});
   
   @override
