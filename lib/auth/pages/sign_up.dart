@@ -69,7 +69,7 @@ class _SignUpPageState extends State<SignUpPage> {
             );
             if (mounted)
             {
-              context.pushNamed(RouteConstants.profile);
+              context.goNamed(RouteConstants.home);
             }
             // else 
             // {
@@ -254,8 +254,8 @@ Widget _buildBody(BuildContext context) {
           Row(
       mainAxisAlignment: MainAxisAlignment.values[2],
       children: [
-        Text("Already have an account?"
-        , style: TextStyle(fontSize: 12, color: AppColours.lightText),),
+        Text("Have an account?"
+        , style: TextStyle(fontSize: 13, color: AppColours.lightText),),
         TextButton(onPressed: (){
           context.pushNamed(RouteConstants.login);
         }, child: Text('Login', 
