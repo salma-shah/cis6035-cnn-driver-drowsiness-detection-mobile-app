@@ -18,7 +18,7 @@ class LocationService {
     LocationPermission locationPermission = await Geolocator.checkPermission();
     if(locationPermission == LocationPermission.denied)
     {
-       locationPermission == await Geolocator.requestPermission();
+       locationPermission = await Geolocator.requestPermission();
     }
     if(locationPermission == LocationPermission.deniedForever)
     {
@@ -38,4 +38,45 @@ class LocationService {
     // returning the locality which is town name
     return placemarks.first.locality;
   }
+
+   Future<Position> getCurrentPosition() async {
+    final locationEnabled =
+        await Geolocator.isLocationServiceEnabled();
+
+    if (!locationEnabled) {
+      throw Exception(
+        'Location services disabled.',
+      );
+    }
+
+    LocationPermission permission =
+        await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission =
+          await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.denied) {
+      throw Exception(
+        'Location permission denied.',
+      );
+    }
+
+    if (permission ==
+        LocationPermission.deniedForever) {
+      throw Exception(
+        'Location permission permanently denied. '
+        'Please enable location permission in settings.',
+      );
+    }
+
+    return Geolocator.getCurrentPosition(
+      locationSettings:
+          const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    );
+  }
+
 }
