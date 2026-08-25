@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:sleepy_driver/dashboard/fatigue_severity.dart';
+import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 
 class FatigueLevelLabel extends StatelessWidget {
   final FatigueSeverity fatigueSeverity;
