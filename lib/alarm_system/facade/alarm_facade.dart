@@ -9,10 +9,8 @@ class AlarmFacade {
   final AudioService audioService;
   final VibrationService vibrationService;
   final NotifService notificationService;
-
-  bool _alarmActive = false;
-
-  bool get isAlarmActive => _alarmActive;
+  bool alarmActive = false;
+  bool get isAlarmActive => alarmActive;
 
   AlarmFacade({
     required this.audioService,
@@ -30,7 +28,7 @@ class AlarmFacade {
     required FatigueSeverity severity,
   }) async {
     // DO NOT restart an already active alarm.
-    if (_alarmActive) {
+    if (alarmActive) {
       return;
     }
 
@@ -39,7 +37,7 @@ class AlarmFacade {
     }
 
     // Set this BEFORE starting any async alarm work.
-    _alarmActive = true;
+    alarmActive = true;
 
     try {
       switch (severity) {
@@ -65,14 +63,14 @@ class AlarmFacade {
       }
     } catch (e) {
       // if starting the alarm failed, allow another attempt
-      _alarmActive = false;
+      alarmActive = false;
       rethrow;
     }
   }
 
 Future<void> stop() async {
   log('ALARM FACADE STOP');
-  _alarmActive = false;
+  alarmActive = false;
 
   log('STOPPING AUDIO');
   await audioService.stop();
