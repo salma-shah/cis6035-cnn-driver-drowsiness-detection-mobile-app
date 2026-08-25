@@ -3,6 +3,9 @@ class RouteConstants {
   static const String signUp = 'signup';
   static const String home = 'home';
   static const String login = 'login';
+  static const String tripHistory = 'tripHistory';
+
+  // alert screens
   static const String mildFatigue = 'mildFatigue';
   static const String modFatigue = 'modFatigue';
   static const String severeFatigue = 'severeFatigue';
