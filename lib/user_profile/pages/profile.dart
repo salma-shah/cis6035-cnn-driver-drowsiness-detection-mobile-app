@@ -251,7 +251,6 @@ class _ProfilePageState extends State<ProfilePage> {
             controller: phoneNumController,
           ),
           const SizedBox(height: 30),
-
           // log out and delete buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -295,6 +294,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
               ),
             ],
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+  width: double.infinity,
+  child: CustomProfileButton(
+    text: 'Trip History',
+    onPressed: () {
+      context.pushNamed(
+        RouteConstants.tripHistory,
+      );
+    },
+  ),
           ),
         ],
       ),
