@@ -6,11 +6,9 @@ import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 class DrowsinessAnalysisResult {
   final bool isDrowsy;
   final FatigueSeverity severity;
-
   final bool cnnDrowsy;
   final bool eyesClosed;
   final bool yawning;
-
   final Duration eyeClosureDuration;
   final Duration mouthOpenDuration;
   final Duration drowsinessDuration;

@@ -5,7 +5,6 @@ import 'package:image/image.dart' as img;
 
 class ImageProcessor {
   //  yub to rgb
-
   img.Image convertYUVToRGB(CameraImage camImg) {
     final width = camImg.width;
     final height = camImg.height;
@@ -78,25 +77,7 @@ class ImageProcessor {
     return image;
   }
 
-  // ============================================================
-  // 2. DIRECT RESIZE TO 224x224
-  // ============================================================
-  //
-  // IMPORTANT:
-  // Your training resized directly to 224x224.
-  //
-  // Therefore:
-  // - NO crop
-  // - NO padding
-  // - NO letterbox
-  // - NO aspect-ratio preservation
-  //
-  // The camera image is directly resized to 224x224.
-  //
-  // This may stretch the image if the source is not square,
-  // but that is exactly what we want if training did the same.
-  // ============================================================
-
+  // rsize to 224 224 
   img.Image resizeImage(img.Image image) {
     return img.copyResize(
       image,
@@ -106,22 +87,7 @@ class ImageProcessor {
     );
   }
 
-  // ============================================================
-  // 3. RGB IMAGE -> TENSOR
-  // ============================================================
-  //
-  // MobileNetV3Small was created with:
-  //
-  // include_preprocessing = true
-  // The model itself performs its preprocessing.
-  //
-  // Flutter sends RGB values in the 0-255 range.
-  //
-  // Output shape:
-  //
-  // [1, 224, 224, 3]
-  //
-  // ============================================================
+  // RGB -> TENSOR
 
   List<List<List<List<double>>>> imageToTensor(
     img.Image image,

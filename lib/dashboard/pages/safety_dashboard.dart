@@ -2,15 +2,17 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:sleepy_driver/dashboard/custom_widgets/fatigue_lvl_label.dart';
 import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_bloc.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_event.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_state.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
-
 import 'package:sleepy_driver/shared/custom_widgets/button.dart';
+import 'package:sleepy_driver/trips/viewmodels/bloc/trip_bloc.dart';
+import 'package:sleepy_driver/trips/viewmodels/bloc/trip_event.dart';
+import 'package:sleepy_driver/trips/viewmodels/bloc/trip_state.dart';
+
 
 class SafetyDashboardPage extends StatefulWidget {
   const SafetyDashboardPage({
@@ -29,19 +31,30 @@ class _SafetyDashboardPageState
   void initState() {
     super.initState();
 
-    context.read<DrowsinessBloc>().add(
-      const DrowsinessInitialize(),
+    final drowsinessBloc =
+        context.read<DrowsinessBloc>();
+
+    if (drowsinessBloc.state.status ==
+        DrowsinessStatus.initial) {
+      drowsinessBloc.add(
+        const DrowsinessInitialize(),
+      );
+    }
+  }
+
+// collecting data for starting and ending trip
+  void _startTrip() {
+    final startTime =
+        DateTime.now();
+
+    context.read<TripBloc>().add(
+      StartTripEvent(
+        startTime: startTime,
+      ),
     );
   }
 
-// start and end drowsiness blocs
-  void startDriverMonitoring() {
-    context.read<DrowsinessBloc>().add(
-      const DrowsinessStartMonitoring(),
-    );
-  }
-
-  void endDriverMonitoring() {
+  void _endTrip(DrowsinessState drowsinessState,TripStarted tripState) {
     context.read<DrowsinessBloc>().add(
       const DrowsinessStopMonitoring(),
     );
@@ -49,106 +62,233 @@ class _SafetyDashboardPageState
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<DrowsinessBloc, DrowsinessState>(
-      listenWhen: (previous, current) {
+    return MultiBlocListener(
+      listeners: [
+     BlocListener<
+    DrowsinessBloc,
+    DrowsinessState>(
+  listenWhen: (
+    previous,
+    current,
+  ) {
+    // error
+    if (previous.status != DrowsinessStatus.error &&
+        current.status == DrowsinessStatus.error) {
+      return true;
+    }
 
-        // error changed
-        if (previous.status != DrowsinessStatus.error &&
-            current.status == DrowsinessStatus.error) {
-          return true;
-        }
+    // monitoring stopped → complete trip
+    if (previous.status != DrowsinessStatus.stopped &&
+        current.status == DrowsinessStatus.stopped) {
+      return true;
+    }
 
-        // new alarm becomes active
-        if (!previous.alarmActive &&
-            current.alarmActive) {
-          return true;
-        }
+    // new alarm
+    if (!previous.alarmActive &&
+        current.alarmActive) {
+      return true;
+    }
 
-        return false;
-      },
+    return false;
+  },
 
-      listener: (context, state) {
+  listener: (
+    context,
+    state,
+  ) {
 
-        if (state.status ==
-            DrowsinessStatus.error) {
+    // ========================================================
+    // DROWSINESS MONITORING STOPPED
+    // ========================================================
 
-          ScaffoldMessenger.of(context)
-              .showSnackBar(
-            SnackBar(
-              content: Text(
-                state.errorMessage ??
-                    'Something went wrong.',
-              ),
-            ),
-          );
+    if (state.status ==
+        DrowsinessStatus.stopped) {
 
-          return;
-        }
+      final tripState =
+          context.read<TripBloc>().state;
 
-        // alarms based on severity
-        if (!state.alarmActive) {
-          return;
-        }
+      if (tripState is TripStarted) {
 
-        final severity =
-            state.severity;
+        debugPrint(
+          '========== FINAL TRIP DATA ==========',
+        );
 
-        if (severity == null) {
-          return;
-        }
+        debugPrint(
+          'Trip ID: ${tripState.tripId}',
+        );
 
-        // will send to relevant alert screens based on severity
+        debugPrint(
+          'Total drowsiness events: '
+          '${state.totalDrowsinessEvents}',
+        );
 
-        switch (severity) {
-          case FatigueSeverity.mild:
-            context.pushNamed( RouteConstants.mildFatigue);
-            break;
+        debugPrint(
+          'Total alerts: '
+          '${state.totalAlerts}',
+        );
 
-          case FatigueSeverity.moderate:
-            context.pushNamed(RouteConstants.modFatigue);
-            break;
+        debugPrint(
+          'Max severity: '
+          '${state.maxSeverity.name}',
+        );
 
-          case FatigueSeverity.severe:
-            context.pushNamed(RouteConstants.severeFatigue);
-            break;
+        debugPrint(
+          '=====================================',
+        );
 
-          case FatigueSeverity.normal:
-            break;
-        }
-      },
+        context.read<TripBloc>().add(
+          CompleteTripEvent(
+            tripId: tripState.tripId,
+            startTime: tripState.startTime,
+            totalDrowsinessEvents:state.totalDrowsinessEvents,
+            totalAlerts:state.totalAlerts,
+            maxDrowsinessLevel:state.maxSeverity.name,
+          ),
+        );
+      }
+
+      return;
+    }
+
+    // ========================================================
+    // ERROR
+    // ========================================================
+
+    if (state.status ==
+        DrowsinessStatus.error) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        SnackBar(
+          content: Text(
+            state.errorMessage ??
+                'Something went wrong.',
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    // ========================================================
+    // ALARM
+    // ========================================================
+
+    if (!state.alarmActive) {
+      return;
+    }
+
+    final severity =
+        state.severity;
+
+    if (severity == null) {
+      return;
+    }
+
+    switch (severity) {
+      case FatigueSeverity.mild:
+        context.pushNamed(
+          RouteConstants.mildFatigue,
+        );
+        break;
+
+      case FatigueSeverity.moderate:
+        context.pushNamed(
+          RouteConstants.modFatigue,
+        );
+        break;
+
+      case FatigueSeverity.severe:
+        context.pushNamed(
+          RouteConstants.severeFatigue,
+        );
+        break;
+
+      case FatigueSeverity.normal:
+        break;
+    }
+  },
+), BlocListener<
+            TripBloc,
+            TripState>(
+          listener: (context,state) {
+
+            if (state is TripStarted) {
+              debugPrint(
+                'Trip started: ${state.tripId}',
+              );
+
+              // staet drowsinss monitoring
+              context.read<DrowsinessBloc>().add(
+                DrowsinessStartMonitoring(
+                  startTime:
+                      state.startTime, tripId: state.tripId
+                ),
+              );
+            }
+
+            if (state is TripCompleted) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Trip saved successfully.',
+                  ),
+                ),
+              );
+            }
+
+            if (state is TripError) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
+                SnackBar(
+                  content: Text(
+                    state.message,
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+      ],
 
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
+          padding:
+              const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 10,
           ),
+
           child: Column(
             crossAxisAlignment:
                 CrossAxisAlignment.stretch,
-            children: [
 
+            children: [
               const SizedBox(
                 height: 25,
               ),
 
-              _buildHeader(
-                context,
+              _buildHeader(context),
+
+              const SizedBox(
+                height: 16,
               ),
+
+              _buildTripTimer(),
 
               const SizedBox(
                 height: 30,
               ),
 
-              _buildBody(
-                context,
-              ),
+              _buildBody(context),
             ],
           ),
         ),
       ),
     );
   }
+
 
   Widget _buildHeader(
     BuildContext context,
@@ -166,47 +306,76 @@ class _SafetyDashboardPageState
 
       builder: (
         context,
-        state,
+        drowsinessState,
       ) {
-
         final isMonitoring =
-            state.status ==
+            drowsinessState.status ==
                 DrowsinessStatus.monitoring;
 
         final isInitializing =
-            state.status ==
+            drowsinessState.status ==
                 DrowsinessStatus.initializing;
 
-        return Container(
-          alignment: Alignment.center,
-          child: CustomGeneralButton(
-            text: isMonitoring
-                ? 'End Trip'
-                : 'Start Trip',
+        return BlocBuilder<
+            TripBloc,
+            TripState>(
+          builder: (
+            context,
+            tripState,
+          ) {
+            return Container(
+              alignment:
+                  Alignment.center,
 
-            onPressed: () {
+              child: CustomGeneralButton(
+                text: isMonitoring
+                    ? 'End Trip'
+                    : 'Start Trip',
 
-              if (isInitializing) {
-                return;
-              }
+                onPressed: () {
 
-              if (isMonitoring) {
-                endDriverMonitoring();
-              } else {
-                startDriverMonitoring();
-              }
-            },
+                  if (isInitializing) {
+                    return;
+                  }
 
-            bgColor:
-                Theme.of(context)
-                    .colorScheme
-                    .secondary,
+                  if (isMonitoring) {
+                    if (tripState
+                        is! TripStarted) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'No active trip found.',
+                          ),
+                        ),
+                      );
 
-            txtColor:
-                Theme.of(context)
-                    .colorScheme
-                    .primary,
-          ),
+                      return;
+                    }
+
+                    _endTrip(
+                      drowsinessState,
+                      tripState,
+                    );
+
+                    return;
+                  }
+                  _startTrip();
+                },
+
+                bgColor:
+                    Theme.of(context)
+                        .colorScheme
+                        .secondary,
+
+                txtColor:
+                    Theme.of(context)
+                        .colorScheme
+                        .primary,
+              ),
+            );
+          },
         );
       },
     );
@@ -222,7 +391,6 @@ class _SafetyDashboardPageState
         context,
         state,
       ) {
-
         if (state.status ==
             DrowsinessStatus.initializing) {
           return const Center(
@@ -261,7 +429,6 @@ class _SafetyDashboardPageState
               CrossAxisAlignment.center,
 
           children: [
-
             _buildCameraPreview(
               context,
               controller,
@@ -276,6 +443,8 @@ class _SafetyDashboardPageState
       },
     );
   }
+
+  // camera view
 
   Widget _buildCameraPreview(
     BuildContext context,
@@ -307,7 +476,6 @@ class _SafetyDashboardPageState
             fit: StackFit.expand,
 
             children: [
-
               CameraPreview(
                 controller,
               ),
@@ -329,19 +497,141 @@ class _SafetyDashboardPageState
     );
   }
 
-  // fatigue label at bottom of screen
+  // timer
+
+  Widget _buildTripTimer() {
+    return BlocBuilder<
+        DrowsinessBloc,
+        DrowsinessState>(
+      buildWhen: (
+        previous,
+        current,
+      ) {
+        return previous.tripDuration !=
+            current.tripDuration;
+      },
+
+      builder: (
+        context,
+        state,
+      ) {
+        final isMonitoring =
+            state.status ==
+                DrowsinessStatus.monitoring;
+
+        return Container(
+          margin:
+              const EdgeInsets.symmetric(
+            horizontal: 20,
+          ),
+
+          padding:
+              const EdgeInsets.symmetric(
+            horizontal: 18,
+            vertical: 14,
+          ),
+
+          decoration: BoxDecoration(
+            color: Colors.white,
+
+            borderRadius:
+                BorderRadius.circular(
+              20,
+            ),
+
+            border: Border.all(
+              color:
+                  Theme.of(context)
+                      .colorScheme
+                      .primary,
+              width: 1.5,
+            ),
+
+            boxShadow: [
+              BoxShadow(
+                color:
+                    Colors.black.withValues(
+                  alpha: 0.08,
+                ),
+                blurRadius: 10,
+                offset:
+                    const Offset(0, 4),
+              ),
+            ],
+          ),
+
+          child: Row(
+            mainAxisAlignment:
+                MainAxisAlignment.center,
+
+            children: [
+              Icon(
+                Icons.timer_outlined,
+                color:
+                    Theme.of(context)
+                        .colorScheme
+                        .primary,
+              ),
+
+              const SizedBox(
+                width: 10,
+              ),
+
+              Text(
+                isMonitoring
+                    ? _formatDuration(
+                        state.tripDuration,
+                      )
+                    : '00:00:00',
+
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight:
+                      FontWeight.w700,
+                  color:
+                      Theme.of(context)
+                          .colorScheme
+                          .primary,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatDuration(
+    Duration duration,
+  ) {
+    final hours =
+        duration.inHours;
+
+    final minutes =
+        duration.inMinutes
+            .remainder(60);
+
+    final seconds =
+        duration.inSeconds
+            .remainder(60);
+
+    return '${hours.toString().padLeft(2, '0')}:'
+        '${minutes.toString().padLeft(2, '0')}:'
+        '${seconds.toString().padLeft(2, '0')}';
+  }
+
+
   Widget _buildFatigueLabel(
     DrowsinessState state,
   ) {
-
     if (state.status !=
         DrowsinessStatus.monitoring) {
-
       return const FatigueLevelLabel(
         fatigueSeverity:
             FatigueSeverity.normal,
       );
     }
+
     return FatigueLevelLabel(
       fatigueSeverity:
           state.severity ??

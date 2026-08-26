@@ -1,15 +1,6 @@
 import 'dart:math' as math;
 import 'package:kwon_mediapipe_landmarker/kwon_mediapipe_landmarker.dart';
-
-class FaceMetrics {
-  final double ear;
-  final double mar;
-
-  const FaceMetrics({
-    required this.ear,
-    required this.mar,
-  });
-}
+import 'package:sleepy_driver/drowsiness_detection/models/face_metrics.dart';
 
 class FaceMetricsProcessor {
 
@@ -50,7 +41,7 @@ class FaceMetricsProcessor {
 
     final ear = (leftEar + rightEar) / 2;
 
-    final mar = _calculateMouthAspectRatio(
+    final mar = calculateMouthAspectRatio(
       landmarks,
     );
 
@@ -91,7 +82,7 @@ class FaceMetricsProcessor {
         (2 * horizontal);
   }
 
-  double _calculateMouthAspectRatio(
+  double calculateMouthAspectRatio(
     List<Landmark> landmarks,
   ) {
 

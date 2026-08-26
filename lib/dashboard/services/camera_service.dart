@@ -35,7 +35,7 @@ class CameraService{
   }
 
   // starting stream
-  Future<void> startCaptureStream(Function (CameraImage camImg) onFrame,) async {
+  Future<void> startCaptureStream(Function (CameraImage camImg) onFrame) async {
     if (!isInitialized)
     {throw Exception("Camera is not initialized");}
     
