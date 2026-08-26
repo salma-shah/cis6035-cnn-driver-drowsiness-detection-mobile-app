@@ -1,14 +1,18 @@
+import 'dart:developer';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sleepy_driver/dashboard/custom_widgets/fatigue_lvl_label.dart';
+import 'package:sleepy_driver/dashboard/custom_widgets/toast_dashboard.dart';
 import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_bloc.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_event.dart';
 import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_state.dart';
 import 'package:sleepy_driver/routing/route_constants.dart';
 import 'package:sleepy_driver/shared/custom_widgets/button.dart';
+import 'package:sleepy_driver/styles/app_colours.dart';
 import 'package:sleepy_driver/trips/viewmodels/bloc/trip_bloc.dart';
 import 'package:sleepy_driver/trips/viewmodels/bloc/trip_event.dart';
 import 'package:sleepy_driver/trips/viewmodels/bloc/trip_state.dart';
@@ -96,11 +100,6 @@ class _SafetyDashboardPageState
     context,
     state,
   ) {
-
-    // ========================================================
-    // DROWSINESS MONITORING STOPPED
-    // ========================================================
-
     if (state.status ==
         DrowsinessStatus.stopped) {
 
@@ -109,31 +108,27 @@ class _SafetyDashboardPageState
 
       if (tripState is TripStarted) {
 
-        debugPrint(
-          '========== FINAL TRIP DATA ==========',
+        log(
+          'FINAL TRIP DATA'
         );
 
-        debugPrint(
+        log(
           'Trip ID: ${tripState.tripId}',
         );
 
-        debugPrint(
+        log(
           'Total drowsiness events: '
           '${state.totalDrowsinessEvents}',
         );
 
-        debugPrint(
+        log(
           'Total alerts: '
           '${state.totalAlerts}',
         );
 
-        debugPrint(
+        log(
           'Max severity: '
           '${state.maxSeverity.name}',
-        );
-
-        debugPrint(
-          '=====================================',
         );
 
         context.read<TripBloc>().add(
@@ -150,30 +145,19 @@ class _SafetyDashboardPageState
       return;
     }
 
-    // ========================================================
-    // ERROR
-    // ========================================================
-
     if (state.status ==
         DrowsinessStatus.error) {
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-        SnackBar(
-          content: Text(
-            state.errorMessage ??
-                'Something went wrong.',
-          ),
-        ),
-      );
-
+     CustomToastDashboard.show(
+  context: context,
+  message: state.errorMessage ??
+      'Something went wrong.',
+  icon: Icons.error_outline_rounded,
+  bgColor: AppColours.error,
+  txtColor: Colors.white,
+);
       return;
     }
-
-    // ========================================================
-    // ALARM
-    // ========================================================
-
     if (!state.alarmActive) {
       return;
     }
@@ -218,7 +202,7 @@ class _SafetyDashboardPageState
                 'Trip started: ${state.tripId}',
               );
 
-              // staet drowsinss monitoring
+              // start drowsinss monitoring
               context.read<DrowsinessBloc>().add(
                 DrowsinessStartMonitoring(
                   startTime:
@@ -227,27 +211,24 @@ class _SafetyDashboardPageState
               );
             }
 
-            if (state is TripCompleted) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Trip saved successfully.',
-                  ),
-                ),
-              );
-            }
-
-            if (state is TripError) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(
-                SnackBar(
-                  content: Text(
-                    state.message,
-                  ),
-                ),
-              );
-            }
+           if (state is TripCompleted) {
+  CustomToastDashboard.show(
+    context: context,
+    message: 'Trip saved successfully.',
+    icon: Icons.check_circle_outline_rounded,
+    bgColor: AppColours.primary,
+    txtColor: Colors.white,
+  );
+}
+if (state is TripError) {
+  CustomToastDashboard.show(
+    context: context,
+    message: state.message,
+    icon: Icons.error_outline_rounded,
+    bgColor: AppColours.error,
+    txtColor: Colors.white,
+  );
+}
           },
         ),
       ],
@@ -341,16 +322,13 @@ class _SafetyDashboardPageState
                   if (isMonitoring) {
                     if (tripState
                         is! TripStarted) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'No active trip found.',
-                          ),
-                        ),
-                      );
-
+                   CustomToastDashboard.show(
+  context: context,
+  message: 'No active trip found.',
+  icon: Icons.info_outline_rounded,
+  bgColor: AppColours.accent,
+  txtColor: Colors.white,
+);
                       return;
                     }
 
