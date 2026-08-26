@@ -1,6 +1,6 @@
 # SleepyDriver; CNN-based Mobile Application for Real-Time Driver Fatigue Detection across Varying Light Conditions 😴💤🚗
 
-A driver drowsiness detection mobile application that acts as a support tool for drivers who drive long journeys during early mornings and late nights. Built with Flutter and Firebase, following a combination of MVMM and layered architecture, this application is designed to detect drowsiness in drivers across varying light conditions to improve road safety. 
+A driver drowsiness detection mobile application that acts as a support tool for drivers who drive long journeys during early mornings and late nights. Built with Flutter and Firebase, following a combination of MVVM and layered architecture, this application is designed to detect drowsiness in drivers across varying light conditions to improve road safety. 
 
 ## Demonstration: 
 
@@ -23,12 +23,18 @@ The Unified Process was followed to build this project; it saves cost and time, 
 * OTPs sent to phone number in real-time, ensuring strong security
 
 ### User Profile Management
+* Update and manage profile details
+* Safe session handling and destruction with the logout feature
 
 ### Drowsiness Detection
 
+
 ### Recommendations & Nearby Rest Stops
 
-### Emergency SMS
+### Trip History 
+* User trip history can be viewed
+* Information like trip date, duration and start-end times are displayed
+* Each trip contains details regarding drowsiness alerts and number of breaks to provide valuable insights regarding driver behaviour and fatigue
 
 ## CNN-Model
 
@@ -54,7 +60,7 @@ Branch strategy:
 * ```master```: Production environment for deployment and live-monitoring
 
 Version-control techniques:
-* Merging: Once a feature was fully-complete and working, its branch was merged into ```development``` branch before deletion
+* Merging: Once a feature was fully complete and working, its branch was merged into ```development``` branch before deletion
 * Commits & Pushes: Following Unified Process, small incremental commits were pushed to the ```development``` branch, serving a single purpose and making it easier to track
 * Pull Requests (PR): When pushing commits to ```master```, a pull request was created to review before selectively integrating changes
 * Deployment: After thorough testing, code is pushed from ```qa``` branch to ```master``` branch
