@@ -167,7 +167,7 @@ Widget _buildTripCard(
         Text(
           'Trip Duration',
           style: TextStyle(
-            fontSize: 11,
+            fontSize: 13,
             fontWeight: FontWeight.w600,
             color: AppColours.primary
                 .withValues(alpha: 0.65),
@@ -191,8 +191,8 @@ Widget _buildTripCard(
           children: [
             Expanded(
               child: _buildStat(
-                icon:
-                    Icons.warning_amber_rounded,
+                // icon:
+                //     Icons.warning_amber_rounded,
                 label: 'Alerts',
                 value:
                     trip.totalAlerts.toString(),
@@ -201,9 +201,9 @@ Widget _buildTripCard(
             const SizedBox(width: 12),
             Expanded(
               child: _buildStat(
-                icon:
-                    Icons.visibility_outlined,
-                label: 'Drowsiness Events',
+                // icon:
+                //     Icons.visibility_outlined,
+                label: 'Drowsy Events',
                 value:
                     trip.totalDrowsinessEvents
                         .toString(),
@@ -266,23 +266,20 @@ Widget _buildTripCard(
 }
 
 Widget _buildStat({
-  required IconData icon,
   required String label,
   required String value,
 }) {
   return Container(
     padding: const EdgeInsets.symmetric(
-      horizontal: 12,
-      vertical: 10,
+      horizontal: 9.5,
+      vertical: 8,
     ),
-
     decoration: BoxDecoration(
       color: Colors.white.withValues(
         alpha: 0.42,
       ),
       borderRadius:
           BorderRadius.circular(16),
-
       border: Border.all(
         color: AppColours.primary
             .withValues(alpha: 0.18),
@@ -292,14 +289,6 @@ Widget _buildStat({
 
     child: Row(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: AppColours.primary,
-        ),
-
-        const SizedBox(width: 8),
-
         Expanded(
           child: Column(
             crossAxisAlignment:
@@ -308,21 +297,19 @@ Widget _buildStat({
               Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: AppColours.primary,
                 ),
               ),
-
               const SizedBox(height: 2),
-
               Text(
                 label,
                 maxLines: 1,
                 overflow:
                     TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: AppColours.primary
                       .withValues(alpha: 0.65),
