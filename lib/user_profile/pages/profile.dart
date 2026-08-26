@@ -115,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 }
   }),
           BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) {
+            listener: (context, state) async {
                log('AUTH STATE CHANGED: $state');
                log('AUTH STATE CHANGED: ${state.runtimeType}');
               if (state is AuthAccountDeletedState) {
@@ -138,6 +138,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     bgColor: AppColours.success,
                     icon: Icons.check_circle_outline,
                   );
+                  await Future.delayed(const Duration(seconds: 2));
+                  if (!mounted) return;
+
                   context.goNamed(RouteConstants.splash);
                   return;
               }
