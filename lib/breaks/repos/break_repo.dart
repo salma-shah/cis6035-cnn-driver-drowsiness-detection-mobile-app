@@ -1,8 +1,9 @@
+import 'package:sleepy_driver/breaks/services/break_service.dart';
+
 import '../models/break_record.dart';
-import '../services/break_service.dart';
 
 class BreakRepo {
-  final BreakService service;
+  final BreakServiceInterface service;
 
   BreakRepo({
     required this.service,

@@ -1,8 +1,9 @@
+import 'package:sleepy_driver/safety_tips/services/safety_tip_service.dart';
+
 import '../models/safety_tip.dart';
-import '../services/safety_tip_service.dart';
 
 class SafetyTipRepo {
-  final SafetyTipService service;
+  final SafetyTipServiceInterface service;
 
   SafetyTipRepo({
     required this.service,

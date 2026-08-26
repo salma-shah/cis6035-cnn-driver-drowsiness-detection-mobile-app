@@ -1,69 +1,9 @@
-import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../models/safety_tip.dart';
 
-class SafetyTipService {
-  final FirebaseFirestore firestore;
-
-  SafetyTipService({
-    FirebaseFirestore? firestore,
-  }) : firestore =
-            firestore ?? FirebaseFirestore.instance;
-
-  CollectionReference<Map<String, dynamic>>
-      get _tips =>
-          firestore.collection('safety_tips');
+abstract interface class SafetyTipServiceInterface {
+  Stream<List<SafetyTip>> getActiveTips();
 
   Future<String> createTip(
     SafetyTip tip,
-  ) async {
-    try {
-      final document = _tips.doc();
-
-      final data = tip.toMap();
-
-      data['tipId'] = document.id;
-
-      await document.set(data);
-
-      log(
-        'Safety tip created: ${document.id}',
-        name: 'SafetyTipService',
-      );
-
-      return document.id;
-    } catch (e, stackTrace) {
-      log(
-        'Failed to create safety tip.',
-        name: 'SafetyTipService',
-        error: e,
-        stackTrace: stackTrace,
-      );
-
-      rethrow;
-    }
-  }
-
-  Stream<List<SafetyTip>> getActiveTips() {
-    return _tips
-        .where(
-          'isActive',
-          isEqualTo: true,
-        )
-        .snapshots()
-        .map(
-          (snapshot) {
-            return snapshot.docs
-                .map(
-                  (document) =>
-                      SafetyTip.fromMap(
-                    document,
-                  ),
-                )
-                .toList();
-          },
-        );
-  }
+  );
 }

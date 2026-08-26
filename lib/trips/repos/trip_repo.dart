@@ -2,16 +2,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:sleepy_driver/trips/models/trip_record.dart';
 import 'package:sleepy_driver/trips/services/trip_service.dart';
+import 'package:sleepy_driver/trips/services/trip_service_impl.dart';
 
 class TripRepository {
-  final TripService tripService;
+  final TripServiceInterface tripService;
   final FirebaseAuth firebaseAuth;
 
   TripRepository({
-    TripService? tripService,
+    TripServiceInterface? tripService,
     FirebaseAuth? firebaseAuth,
   })  : tripService =
-            tripService ?? TripService(),
+            tripService ?? TripServiceImpl(),
         firebaseAuth =
             firebaseAuth ?? FirebaseAuth.instance;
 

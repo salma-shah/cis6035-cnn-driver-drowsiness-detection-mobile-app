@@ -120,7 +120,6 @@ class TripBloc
   }
 
   //load user trips to display
-
   Future<void> onLoadMyTrips(
     LoadMyTripsEvent event,
     Emitter<TripState> emit,
