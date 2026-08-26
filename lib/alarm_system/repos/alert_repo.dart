@@ -3,7 +3,7 @@ import 'package:sleepy_driver/alarm_system/services/alerts_service.dart';
 import '../models/drowsiness_alert.dart';
 
 class DrowsinessAlertRepo {
-  final DrowsinessAlertService service;
+  final DrowsinessAlertServiceInterface service;
 
   DrowsinessAlertRepo({
     required this.service,

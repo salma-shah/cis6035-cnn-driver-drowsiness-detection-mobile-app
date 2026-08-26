@@ -206,7 +206,6 @@ class DrowsinessAlertBloc
   }
 
   // helper for formatting 
-
   String _severityToString(
     FatigueSeverity severity,
   ) {
