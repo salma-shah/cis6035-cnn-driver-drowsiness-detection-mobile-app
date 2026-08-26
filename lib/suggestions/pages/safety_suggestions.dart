@@ -1068,9 +1068,7 @@ class _SafetySuggestionsPageState extends State<SafetySuggestionsPage> {
                   color: Colors.black54,
                 ),
               ),
-
               const SizedBox(height: 4),
-
               _buildOpenStatus(stop),
             ],
           ),
@@ -1132,6 +1130,13 @@ class _SafetySuggestionsPageState extends State<SafetySuggestionsPage> {
 Widget _buildOpenStatus(
   RestStop stop,
 ) {
+  debugPrint(
+    'STOP: ${stop.name} | '
+    'openNow=${stop.openNow} | '
+    'openingHours=${stop.openingHours}',
+  );
+
+
   if (stop.openNow == true) {
     return Row(
       mainAxisSize:
@@ -1182,28 +1187,23 @@ Widget _buildOpenStatus(
     );
   }
 
-  return Row(
-    mainAxisSize:
-        MainAxisSize.min,
-    children: [
-      const StatusDot(
-        color: Color.fromARGB(68, 158, 158, 158),
+ return const Row(
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    StatusDot(
+      color: Color.fromARGB(255, 56, 61, 71),
+    ),
+    SizedBox(width: 5),
+    Text(
+      'Hours unavailable',
+      style: TextStyle(
+        fontSize: 10,
+        fontWeight: FontWeight.w600,
+        color: Color(0xFF667085),
       ),
-
-      const SizedBox(width: 5),
-
-      Text(
-        'Hours unavailable',
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight:
-              FontWeight.w600,
-          color:
-              Color.fromARGB(68, 158, 158, 158),
-        ),
-      ),
-    ],
-  );
+    ),
+  ],
+);
 }
 
  Future<void> _takeBreakAtStop() async {
