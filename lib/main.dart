@@ -1,50 +1,84 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sleepy_driver/alarm_system/helpers/create_alarm_facade.dart';
-import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
-import 'package:sleepy_driver/drowsiness_detection/helpers/drowsiness_detection_dep.dart';
-import 'package:sleepy_driver/drowsiness_detection/viewmodels/bloc/drowsiness_detection_bloc.dart';
-import 'package:sleepy_driver/location/viewmodels/bloc/location_bloc.dart';
-import 'package:sleepy_driver/styles/app_theme.dart';
-import 'package:firebase_core/firebase_core.dart';
+
+import 'package:sleepy_driver/core/composition_root.dart';
 import 'package:sleepy_driver/firebase_options.dart';
 import 'package:sleepy_driver/routing/routes.dart';
-import 'package:sleepy_driver/user_profile/viewmodels/bloc/user_profile_bloc.dart';
+import 'package:sleepy_driver/styles/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp
-  (
+
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  final compositionRoot = CompositionRoot();
+
   runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => AuthBloc()),
-        BlocProvider(create: (context) => UserProfileBloc()),
-        BlocProvider(create: (context) => LocationBloc()),
-        BlocProvider(create: (context) => DrowsinessBloc(repository: createDrowsinessRepository(), alarmFacade:createAlarmFacade())),
-      ],
-      child: MyApp(),
-    ));
+    MyApp(
+      compositionRoot: compositionRoot,
+    ),
+  );
 }
 
-// landing page for app
 class MyApp extends StatelessWidget {
-   MyApp({super.key});
+  final CompositionRoot compositionRoot;
 
-  final _appRouter = AppRouter();
+  const MyApp({
+    super.key,
+    required this.compositionRoot,
+  });
 
   @override
   Widget build(BuildContext context) {
-   return MaterialApp.router(
-    debugShowCheckedModeBanner: false,
-    title: 'SleepyDriver Main Page',
-    theme: AppTheme.lightTheme,
-    routerConfig: _appRouter.router,
-   );
-  }
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              compositionRoot.createAuthBloc(),
+        ),
+        BlocProvider(
+  create: (_) =>
+      compositionRoot.createUserProfileBloc(),
+),
 
-  
+BlocProvider(
+  create: (_) =>
+      compositionRoot.createLocationBloc(),
+),
+        BlocProvider(
+          create: (_) =>
+              compositionRoot.createTripBloc(),
+        ),
+
+        BlocProvider(
+          create: (_) =>
+              compositionRoot.createBreakBloc(),
+        ),
+
+        BlocProvider(
+          create: (_) =>
+              compositionRoot.createSafetyTipBloc(),
+        ),
+
+        BlocProvider(
+          create: (_) =>
+              compositionRoot.createRecommendationBloc(),
+        ),
+
+        BlocProvider(
+          create: (_) =>
+              compositionRoot.createDrowsinessBloc(),
+        ),
+      ],
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        title: 'SleepyDriver Main Page',
+        theme: AppTheme.lightTheme,
+        routerConfig: AppRouter().router,
+      ),
+    );
+  }
 }
