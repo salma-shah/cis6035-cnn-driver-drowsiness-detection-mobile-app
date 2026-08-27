@@ -4,7 +4,7 @@ class TfliteService {
   late Interpreter interpreter;
   bool isLoaded = false;
 
-  /// load TFLite model
+  // load TFLite model
   Future<void> loadModel() async {
     try {
       interpreter = await Interpreter.fromAsset(
@@ -44,8 +44,7 @@ class TfliteService {
     try {
       final inputTensor = interpreter.getInputTensor(0);
       final outputTensor = interpreter.getOutputTensor(0);
-
-      print('========== TFLITE INFERENCE ==========');
+ 
       print('Expected input shape: ${inputTensor.shape}');
       print('Expected input type : ${inputTensor.type}');
       print('Expected output shape: ${outputTensor.shape}');

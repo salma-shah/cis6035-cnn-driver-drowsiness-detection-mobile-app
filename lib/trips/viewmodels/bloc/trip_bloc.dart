@@ -19,7 +19,9 @@ class TripBloc
     required this.tripRepository,
   }) : super(
           const TripInitial(),
-        ) {
+        ) 
+        
+  {
     on<StartTripEvent>(
       onStartTrip,
     );

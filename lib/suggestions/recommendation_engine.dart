@@ -40,7 +40,6 @@ class RecommendationEngine {
     double score = 0;
 
     // calculating distance
-
     if (stop.distanceKm <= 1) {
       score += 50;
     } else if (stop.distanceKm <= 2) {
@@ -52,7 +51,6 @@ class RecommendationEngine {
     }
 
     // diff rest stop types
-
     switch (stop.type) {
       case 'rest_area':
       case 'services':
@@ -81,7 +79,6 @@ class RecommendationEngine {
     }
 
     // based on severity
-
     if (severity ==
         FatigueSeverity.severe) {
       // for severe fatigue, prioritize close stops
