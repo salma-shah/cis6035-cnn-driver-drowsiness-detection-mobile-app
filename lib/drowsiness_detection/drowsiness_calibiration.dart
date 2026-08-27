@@ -1,10 +1,8 @@
 class DrowsinessCalibration {
   final double earBaseline;
   final double marBaseline;
-
   final double earThreshold;
   final double marThreshold;
-
   final int sampleCount;
 
   const DrowsinessCalibration({

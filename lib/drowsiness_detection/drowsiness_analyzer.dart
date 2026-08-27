@@ -6,12 +6,18 @@ import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 class DrowsinessAnalysisResult {
   final bool isDrowsy;
   final FatigueSeverity severity;
+
   final bool cnnDrowsy;
   final bool eyesClosed;
   final bool yawning;
+
   final Duration eyeClosureDuration;
   final Duration mouthOpenDuration;
   final Duration drowsinessDuration;
+
+  final double headPitch;
+  final bool headNodding;
+  final int recentHeadNodCount;
 
   const DrowsinessAnalysisResult({
     required this.isDrowsy,
@@ -22,36 +28,60 @@ class DrowsinessAnalysisResult {
     required this.eyeClosureDuration,
     required this.mouthOpenDuration,
     required this.drowsinessDuration,
+    required this.headPitch,
+    required this.headNodding,
+    required this.recentHeadNodCount,
   });
 }
 
 class DrowsinessAnalyzer {
-  // cnn
   final double cnnThreshold;
-  // ear and mar values
   double earThreshold;
   double marThreshold;
 
-  // thresholds time
   final Duration requiredEyeClosureDuration;
   final Duration requiredYawningDuration;
-  // combined drowsiness evidence must remain present
-  // for this long before final drowsiness is declared
   final Duration requiredDrowsinessDuration;
+  final double headNodAngleThreshold;
+  final Duration headNodDuration;
+  final Duration headNodWindow;
 
-  // times
   DateTime? eyeClosureStart;
   DateTime? mouthOpenStart;
   DateTime? drowsinessStart;
   DateTime? lastTimestamp;
 
+  double? previousHeadPitch;
+
+  DateTime? headNodDownStart;
+
+  bool nodDownDetected = false;
+
+  /// stores only nods occurred recently
+  final List<DateTime> headNodTimestamps = [];
+
   DrowsinessAnalyzer({
     this.cnnThreshold = 0.5,
+
     required this.earThreshold,
     required this.marThreshold,
-    this.requiredEyeClosureDuration = const Duration(seconds: 3),
-    this.requiredYawningDuration = const Duration(seconds: 5),
-    this.requiredDrowsinessDuration = const Duration(seconds: 3),
+
+    this.requiredEyeClosureDuration =
+        const Duration(seconds: 3),
+
+    this.requiredYawningDuration =
+        const Duration(seconds: 5),
+
+    this.requiredDrowsinessDuration =
+        const Duration(seconds: 3),
+
+    this.headNodAngleThreshold = 8.0,
+
+    this.headNodDuration =
+        const Duration(milliseconds: 1500),
+
+    this.headNodWindow =
+        const Duration(seconds: 30),
   });
 
 
@@ -61,36 +91,42 @@ class DrowsinessAnalyzer {
   }) {
     this.earThreshold = earThreshold;
     this.marThreshold = marThreshold;
+
     reset();
   }
 
-
+  // main analysis
   DrowsinessAnalysisResult analyze({
     required double cnnProbability,
     double? ear,
     double? mar,
+    double? headPitch,
     DateTime? timestamp,
   }) {
-    final now = timestamp ?? DateTime.now();
+    final now =
+        timestamp ?? DateTime.now();
 
     if (lastTimestamp != null &&
         now.isBefore(lastTimestamp!)) {
-      log('Resetting temporal state.',);
+      log(
+        'Resetting temporal state because timestamp moved backwards.',
+      );
+
       reset();
     }
-    lastTimestamp = now;
 
-    final cnnDrowsy = cnnProbability >= cnnThreshold;
+    lastTimestamp = now;
+    _removeExpiredHeadNods(now);
+
+
+    final cnnDrowsy =
+        cnnProbability >= cnnThreshold;
+
     final eyesCurrentlyClosed =
         ear != null &&
         ear.isFinite &&
         ear > 0 &&
         ear < earThreshold;
-    final mouthCurrentlyOpen =
-        mar != null &&
-        mar.isFinite &&
-        mar >= 0 &&
-        mar > marThreshold;
 
     if (eyesCurrentlyClosed) {
       eyeClosureStart ??= now;
@@ -106,9 +142,14 @@ class DrowsinessAnalyzer {
 
     final sustainedEyeClosure =
         eyeClosureDuration >=
-        requiredEyeClosureDuration;
+            requiredEyeClosureDuration;
 
-    // track mouth opening duration
+    final mouthCurrentlyOpen =
+        mar != null &&
+        mar.isFinite &&
+        mar >= 0 &&
+        mar > marThreshold;
+
     if (mouthCurrentlyOpen) {
       mouthOpenStart ??= now;
     } else {
@@ -120,19 +161,37 @@ class DrowsinessAnalyzer {
       mouthOpenStart,
       now,
     );
+
     final sustainedMouthOpening =
         mouthOpenDuration >=
-        requiredYawningDuration;
+            requiredYawningDuration;
 
-    // yawning
     final yawning =
         sustainedMouthOpening;
 
-    // combined drowsiness evidence
-    final drowsinessEvidence =
-        cnnDrowsy && (sustainedEyeClosure || yawning);
+    final headNodding =
+        headPitch != null
+            ? detectHeadNodding(
+                headPitch: headPitch,
+                now: now,
+              )
+            : false;
 
-    // track combined drowsiness duration
+    _removeExpiredHeadNods(now);
+    final recentHeadNodCount =
+        headNodTimestamps.length;
+
+    // combining all facial analysis and model probability to create evidence to decide whether drowsy or not
+    final drowsinessEvidence =
+        cnnDrowsy &&
+        (
+          sustainedEyeClosure ||
+          yawning ||
+          headNodding ||
+          recentHeadNodCount >= 2
+        );
+
+
     if (drowsinessEvidence) {
       drowsinessStart ??= now;
     } else {
@@ -145,19 +204,36 @@ class DrowsinessAnalyzer {
       now,
     );
 
-    // final decision
     final isDrowsy =
         drowsinessDuration >=
-        requiredDrowsinessDuration;
+            requiredDrowsinessDuration;
+            
+    // calculating the severity
+    final severity =
+        calculateSeverity(
+      cnnProbability:
+          cnnProbability,
 
-    // calculating severity
-    final severity = calculateSeverity(
-      cnnProbability: cnnProbability,
-      eyesClosed: sustainedEyeClosure,
-      yawning: yawning,
-      eyeClosureDuration: eyeClosureDuration,
-      drowsinessDuration: drowsinessDuration,
-      isDrowsy: isDrowsy,
+      eyesClosed:
+          sustainedEyeClosure,
+
+      yawning:
+          yawning,
+
+      headNodding:
+          headNodding,
+
+      recentHeadNodCount:
+          recentHeadNodCount,
+
+      eyeClosureDuration:
+          eyeClosureDuration,
+
+      drowsinessDuration:
+          drowsinessDuration,
+
+      isDrowsy:
+          isDrowsy,
     );
 
     log(
@@ -168,25 +244,136 @@ class DrowsinessAnalyzer {
       '| Eye duration: ${eyeClosureDuration.inMilliseconds}ms '
       '| MAR: ${mar?.toStringAsFixed(3)} '
       '| Yawning: $yawning '
+      '| Head pitch: '
+      '${headPitch?.toStringAsFixed(2)} '
+      '| Head nod: $headNodding '
+      '| Recent nods: $recentHeadNodCount '
       '| Drowsy duration: '
       '${drowsinessDuration.inMilliseconds}ms '
-      '| Severity: $severity'
-      '| FINAL: ${isDrowsy ? "DROWSY" : "NON-DROWSY"}',
+      '| Severity: $severity '
+      '| FINAL: '
+      '${isDrowsy ? "DROWSY" : "NON-DROWSY"}',
     );
 
+
     return DrowsinessAnalysisResult(
-      isDrowsy: isDrowsy,
-      cnnDrowsy: cnnDrowsy,
-      eyesClosed: sustainedEyeClosure,
-      yawning: yawning,
-      eyeClosureDuration: eyeClosureDuration,
-      mouthOpenDuration: mouthOpenDuration,
-      drowsinessDuration: drowsinessDuration,
-      severity: severity
+      isDrowsy:
+          isDrowsy,
+
+      severity:
+          severity,
+
+      cnnDrowsy:
+          cnnDrowsy,
+
+      eyesClosed:
+          sustainedEyeClosure,
+
+      yawning:
+          yawning,
+
+      eyeClosureDuration:
+          eyeClosureDuration,
+
+      mouthOpenDuration:
+          mouthOpenDuration,
+
+      drowsinessDuration:
+          drowsinessDuration,
+
+      headPitch:
+          headPitch ?? 0.0,
+
+      headNodding:
+          headNodding,
+
+      recentHeadNodCount:
+          recentHeadNodCount,
     );
   }
 
-  // duration calculator
+
+  bool detectHeadNodding({
+    required double headPitch,
+    required DateTime now,
+  }) {
+    if (previousHeadPitch == null) {
+      previousHeadPitch =
+          headPitch;
+
+      return false;
+    }
+
+    final pitchChange =
+        headPitch -
+            previousHeadPitch!;
+
+    previousHeadPitch =
+        headPitch;
+
+    // ignoring small movements caused by
+    // landmark noise
+    if (pitchChange.abs() <
+        headNodAngleThreshold) {
+      return false;
+    }
+
+
+    if (pitchChange >
+        headNodAngleThreshold) {
+      nodDownDetected = true;
+
+      headNodDownStart ??= now;
+
+      return false;
+    }
+
+    if (pitchChange <
+        -headNodAngleThreshold) {
+      if (nodDownDetected &&
+          headNodDownStart != null) {
+        final duration =
+            now.difference(
+          headNodDownStart!,
+        );
+
+        // valid complete nod
+        if (duration <=
+            headNodDuration) {
+          headNodTimestamps.add(
+            now,
+          );
+
+          nodDownDetected = false;
+          headNodDownStart = null;
+
+          _removeExpiredHeadNods(now);
+
+          return true;
+        }
+      }
+
+      // invalid upward movement
+      nodDownDetected = false;
+      headNodDownStart = null;
+    }
+
+    return false;
+  }
+
+  void _removeExpiredHeadNods(
+    DateTime now,
+  ) {
+    headNodTimestamps.removeWhere(
+      (nodTime) {
+        final age =
+            now.difference(nodTime);
+
+        return age > headNodWindow;
+      },
+    );
+  }
+
   Duration durationSince(
     DateTime? start,
     DateTime now,
@@ -195,18 +382,26 @@ class DrowsinessAnalyzer {
       return Duration.zero;
     }
 
-    final duration = now.difference(start);
+    final duration =
+        now.difference(start);
+
     if (duration.isNegative) {
       return Duration.zero;
     }
+
     return duration;
   }
 
-  // reset all values
   void reset() {
     eyeClosureStart = null;
     mouthOpenStart = null;
     drowsinessStart = null;
     lastTimestamp = null;
+
+    previousHeadPitch = null;
+    headNodDownStart = null;
+    nodDownDetected = false;
+
+    headNodTimestamps.clear();
   }
 }

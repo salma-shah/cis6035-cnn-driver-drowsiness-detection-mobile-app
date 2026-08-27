@@ -11,9 +11,15 @@ class DrowsinessInitialize extends DrowsinessEvent {
 }
 
 class DrowsinessStartMonitoring extends DrowsinessEvent {
-  const DrowsinessStartMonitoring();
-}
+  final DateTime startTime;
+  final String tripId;
+  const DrowsinessStartMonitoring({
+    required this.startTime, required this.tripId
+  });
 
+  @override
+  List<Object?> get props => [startTime];
+}
 class DrowsinessStopMonitoring extends DrowsinessEvent {
   const DrowsinessStopMonitoring();
 }
@@ -40,4 +46,19 @@ class DrowsinessErrorOccurred extends DrowsinessEvent {
 class DrowsinessAlarmDismissed
     extends DrowsinessEvent {
   const DrowsinessAlarmDismissed();
+}
+
+class DrowsinessTripTimerTick
+    extends DrowsinessEvent {
+  const DrowsinessTripTimerTick();
+}
+
+class DrowsinessBreakStarted
+    extends DrowsinessEvent {
+  const DrowsinessBreakStarted();
+}
+
+class DrowsinessBreakEnded
+    extends DrowsinessEvent {
+  const DrowsinessBreakEnded();
 }

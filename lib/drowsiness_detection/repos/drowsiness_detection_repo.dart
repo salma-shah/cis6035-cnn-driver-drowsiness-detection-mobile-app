@@ -6,6 +6,7 @@ import 'package:sleepy_driver/drowsiness_detection/drowsiness_calibiration.dart'
 import 'package:sleepy_driver/drowsiness_detection/models/drowsiness_result.dart';
 import 'package:sleepy_driver/drowsiness_detection/processors/face_metrics_processor.dart';
 import 'package:sleepy_driver/drowsiness_detection/processors/frame_processor.dart';
+import 'package:sleepy_driver/drowsiness_detection/processors/image_processor.dart';
 import 'package:sleepy_driver/drowsiness_detection/services/model_detection_service.dart';
 import 'package:sleepy_driver/drowsiness_detection/services/face_landmark_analysis_service.dart';
 
@@ -13,6 +14,7 @@ class DrowsinessDetectionRepo {
 
   final CameraService cameraService;
   final FrameProcessor frameProcessor;
+  final ImageProcessor imageProcessor;
   final ModelDetectionService detector;
   final FaceLandmarkService faceLandmarkService;
   final DrowsinessAnalyzer analyzer;
@@ -25,6 +27,7 @@ class DrowsinessDetectionRepo {
   DrowsinessDetectionRepo({
     required this.cameraService,
     required this.frameProcessor,
+    required this.imageProcessor,
     required this.detector,
     required this.faceLandmarkService,
     required this.faceMetricsProcessor,
@@ -104,8 +107,8 @@ class DrowsinessDetectionRepo {
   }
 
 
-  void _handleFrame(
-    CameraImage cameraImage, {
+  void _handleFrame(CameraImage cameraImage, 
+  {
     required void Function(DrowsinessResult result) onPrediction,
     void Function(Object error)? onError,
   }) {
@@ -156,6 +159,7 @@ class DrowsinessDetectionRepo {
     }
     double? ear;
     double? mar;
+    double? headPitch;
 
     if (faceResult != null &&
         faceResult.hasFace) {
@@ -166,6 +170,7 @@ class DrowsinessDetectionRepo {
       if (metrics != null) {
         ear = metrics.ear;
         mar = metrics.mar;
+        headPitch = metrics.headPitch;
 
         log(
           'EAR: '
@@ -175,6 +180,11 @@ class DrowsinessDetectionRepo {
         log(
           'MAR: '
           '${mar.toStringAsFixed(4)}',
+        );
+
+        log(
+          'Head Pitch: '
+          '${headPitch.toStringAsFixed(4)}',
         );
       }
     }
@@ -197,9 +207,7 @@ class DrowsinessDetectionRepo {
         finishCalibration();
       }
 
-      // IMPORTANT:
-      // Do not perform drowsiness analysis during
-      // calibration.
+      //calibration wont happen during analysis and vice versa
       return;
     }
 
@@ -209,6 +217,7 @@ class DrowsinessDetectionRepo {
       cnnProbability: probability,
       ear: ear,
       mar: mar,
+      headPitch: headPitch,
       timestamp: DateTime.now()
     );
 
@@ -233,9 +242,10 @@ class DrowsinessDetectionRepo {
       '${analysis.isDrowsy ? "DROWSY" : "NON-DROWSY"}',
     );
 
-    // ============================================================
-    // Result
-    // ============================================================
+// final processed =
+//     imageProcessor.processFrameForDebug(
+//   cameraImage,
+// );
 
     final result =
         DrowsinessResult(
@@ -246,7 +256,9 @@ class DrowsinessDetectionRepo {
       label: analysis.isDrowsy
               ? 'Drowsy'
               : 'Non Drowsy',
-      severity: analysis.severity
+      severity: analysis.severity,
+      drowsinessDuration: analysis.drowsinessDuration
+    //  debugImage: processed.debugImage
     );
     onPrediction(result);
 
@@ -304,130 +316,6 @@ bool finishCalibration() {
 
   return true;
 }
-
-  // Future<void> _processFrame(
-  //   CameraImage cameraImage, {
-  //   required void Function(DrowsinessResult result) onPrediction,
-  //   void Function(Object error)? onError }) async {
-  //   try {
-
-  //     final probability =
-  //         await detector.detect(cameraImage);
-  //     if (!isMonitoring) {
-  //       return;
-  //     }
-
-  //     log('CNN probability: '
-  //       '${probability.toStringAsFixed(4)}',
-  //     );
-
-  //     final faceResult =
-  //         await faceLandmarkService.detect(
-  //       cameraImage,
-  //     );
-
-  //     if (!isMonitoring) {
-  //       return;
-  //     }
-  //     double? ear;
-  //     double? mar;
-
-  //     if (faceResult != null &&
-  //         faceResult.hasFace) {
-  //       final metrics =
-  //           faceMetricsProcessor.calculate(
-  //         faceResult,
-  //       );
-
-  //       if (metrics != null) {
-  //         ear = metrics.ear;
-  //         mar = metrics.mar;
-
-  //         log(
-  //           'EAR: ${ear.toStringAsFixed(4)}',
-  //         );
-
-  //         log(
-  //           'MAR: ${mar.toStringAsFixed(4)}',
-  //         );
-  //       }
-  //     }
-
-  //     // calibiration 
-  //     if (drowsinessCalibrator.isCalibrating)
-  //     {
-  //       // as long as ear and mar are not null
-  //       if (ear != null && mar != null)
-  //       {
-  //         drowsinessCalibrator.addSample(ear: ear, mar: mar);
-  //         log('Calibration sample '
-  //           '${drowsinessCalibrator.sampleCount}/30 '
-  //           'EAR=${ear.toStringAsFixed(4)} ' 'MAR=${mar.toStringAsFixed(4)}');
-
-  //           // if enough samples
-  //           if (drowsinessCalibrator.hasEnoughSamples)
-  //           {
-  //             final calibration = drowsinessCalibrator.finish();
-  //              if (calibration != null) {
-
-  //       log('CALIBRATION IS COMPLETE!');
-  //       log(
-  //         'EAR baseline: '
-  //         '${calibration.earBaseline.toStringAsFixed(4)}',
-  //       ); 
-  //       log(
-  //         'MAR baseline: '
-  //         '${calibration.marBaseline.toStringAsFixed(4)}',
-  //       );
-
-  //       log(
-  //         'EAR threshold: '
-  //         '${calibration.earThreshold.toStringAsFixed(4)}',
-  //       );
-
-  //       log(
-  //         'MAR threshold: '
-  //         '${calibration.marThreshold.toStringAsFixed(4)}',
-  //       );
-
-  //       log(
-  //         'Samples: '
-  //         '${calibration.sampleCount}',
-  //       );
-  //              }
-  //           }
-  //       }
-  //       return;
-  //     }
-
-  //     final isDrowsy = analyzer.analyze(cnnProbability: probability, ear: ear, mar: mar);
-
-  //     final label = isDrowsy
-  //         ? 'Drowsy'
-  //         : 'Non Drowsy';
-
-  //      log('FINAL DETECTION: $label based on $probability and $ear and $mar');
-
-  //     final result = DrowsinessResult(
-  //       probability: probability,
-  //       ear: ear,
-  //       mar: mar,
-  //       isDrowsy: isDrowsy,
-  //       label: label,
-  //     );
-
-  //     onPrediction(result);
-  //   } catch (e, stackTrace) {
-  //     log(
-  //       'Repository: Drowsiness inference error: $e',
-  //       stackTrace: stackTrace,
-  //     );
-
-  //     onError?.call(e);
-  //   } finally {
-  //     isProcessing = false;
-  //   }
-  // }
 
   Future<void> stopMonitoring() async {
     if (!isMonitoring) {
