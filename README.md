@@ -19,22 +19,40 @@ The Unified Process was followed to build this project; it saves cost and time, 
 
 ## Key Features
 ### Secure Authentication 
-* Secure login authentication with phone number and OTP verification
-* OTPs sent to phone number in real-time, ensuring strong security
+* Secure login using phone number and OTP verification
+* Real-time OTP delivery for secure user authentication
+* Firebase Authentication for secure session management
+* Secure logout and account deletion
 
 ### User Profile Management
-* Update and manage profile details
+* Create and manage profile details
+* Update personal profile details
+* Persistent user data stored securely in Firebase Firestore
 * Safe session handling and destruction with the logout feature
 
 ### Drowsiness Detection
 
+### Alarm System
+
+
 
 ### Recommendations & Nearby Rest Stops
+* Identifies nearby suitable rest stops like restaurants, cafes, fuel stations, and designated parking spaces when driver fatigue is detected, through the use of Overpass API
+* Provides recommended stopping locations based on the driver's current location
+* Displays useful rest-stop information such as distance, rating, opening status, address, and opening hours
+* Allows navigation to recommended nearby rest-stops through redirection to GoogleMaps/AppleMaps, with fallback to OpenStreetMap
+* Supports safe decision-making by guiding drivers toward appropriate places to take a break
 
 ### Trip History 
-* User trip history can be viewed
-* Information like trip date, duration and start-end times are displayed
-* Each trip contains details regarding drowsiness alerts and number of breaks to provide valuable insights regarding driver behaviour and fatigue
+* View previous trip history
+* Displays trip date, duration, and start/end times
+* Records drowsiness alerts associated with each trip, and number and durations of breaks
+* Provides useful insights into driver behaviour and fatigue patterns
+
+### Break Management
+* Records driver breaks during trips
+* Stores break start and end times
+* Calculates break duration
 
 ## CNN-Model
 
@@ -51,6 +69,35 @@ Several MobileNetV3 models were trained and evaluated by the process of transfer
 ## Screenshots
 
 ## Architecture & Technology Stack
+The mobile application follows a combination of layered architecture and MVVM to separate responsibilities between the presentation, business logic, data, and Firebase service layers.
+* **Presentation Layer**: Interfaces built with Flutter (stateful and stateless widgets) for user interactions.
+* **BLoC / View Model**: Manages application state and UI updates, acting as the bridge between data and UI, like updating UI based on drowsiness predictions
+* **Repository Layer**: Acts as an abstraction between the application logic and data sources.
+* **Service Layer**: Handles authentication, Firestore operations, location services, drowsiness alerts, trip management, and recommendations.
+* **Model Layer**: Defines structured data models
+
+Following the layered-architecture approach supports the system, making it more scalable and easier to read and maintain.
+
+### Frontend & Application
+* Flutter: Cross-platform mobile application development
+* Dart: Primary programming language
+* State Management - Business Logic of Component (BLoC, Events and States)
+  
+### Machine Learning & Computer Vision
+* Python: Primary programming language for data preprocessing, model training and evaluation
+* TensorFlow / TensorFlow Lite: Real-time, lightweight drowsiness detection which allows the model to run inference on an edge device
+
+### Backend & Cloud Services
+* Firebase Authentication: Phone number and OTP authentication
+* Cloud Firestore: Stores users, trips, breaks, drowsiness alerts, and related data
+
+### Location & Navigation
+* Geolocation: Obtains the driver's current location (latitude and longitude)
+* Overpass API: Provides information about suitable stopping locations
+* Map & Routing Services like GoogleMaps and AppleMaps: Supports route calculation and navigation toward recommended rest stops
+
+### Version Control
+* CI/CD pipeline: GitHub
 
 ## CI/CD Pipeline
 Branch strategy:
