@@ -23,7 +23,7 @@ class AlarmFacade {
   Future<void> triggerAlarm({
     required FatigueSeverity severity,
   }) async {
-    // DO NOT restart an already active alarm.
+    // no restart an already active alarm
     if (alarmActive) {
       return;
     }
@@ -32,7 +32,6 @@ class AlarmFacade {
       return;
     }
 
-    // Set this BEFORE starting any async alarm work.
     alarmActive = true;
 
     try {
