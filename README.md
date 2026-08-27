@@ -46,7 +46,7 @@ The Unified Process was followed to build this project; it saves cost and time, 
 ### Trip History 
 * View previous trip history
 * Displays trip date, duration, and start/end times
-* Records drowsiness alerts associated with each trip, and number and durations of breaks
+* Records drowsiness alerts associated with each trip, and the amount and durations of breaks
 * Provides useful insights into driver behaviour and fatigue patterns
 
 ### Break Management
@@ -57,10 +57,10 @@ The Unified Process was followed to build this project; it saves cost and time, 
 ## CNN-Model
 
 ### Datasets
-Data from the Driver Drowsiness Dataset (ismailnasri20),	NTHU Dataset (samymesbah), and MRL Dataset (akashshingha850) were cleaned, preprocessed and resized to 224 x 224 size. The data is highly diverse, comprising individuals of different appearances, particularly South Asians, wearing glasses, and various eye states in different lightings, making it highly suitable since SleepyDriver's target audience is Sri Lankans, and objective is detecting drowsiness across varying light conditions.
+Data from the Driver Drowsiness Dataset (ismailnasri20),	NTHU Dataset (samymesbah), and MRL Dataset (akashshingha850) were cleaned, preprocessed and resized to a 224 x 224 size. The data is highly diverse, comprising individuals of different appearances, particularly South Asians, wearing glasses, and various eye states in different lighting conditions, making it highly suitable since SleepyDriver's target audience is Sri Lankans, and the objective is detecting drowsiness across varying light conditions.
 
 ### SleepyDriver Model
-Several MobileNetV3 models were trained and evaluated by the process of transfer learning and fine-tuning utilizing ImageNet weights. First, the backbone layers were frozen, then trained on preprocessed, augmented data, before the backbone layers were unfrozen. The model was compiled and trained again, then validated and evaluated on unseen test data. This makes it highly efficient and robust to our scenario. The models achieved high accuracy and performed well, particularly with Drowsy Recall. 
+Several MobileNetV3 models were trained and evaluated using transfer learning and fine-tuning with ImageNet weights. First, the backbone layers were frozen, then trained on preprocessed, augmented data, before the backbone layers were unfrozen. The model was compiled and trained again, then validated and evaluated on unseen test data. This makes it highly efficient and robust to our scenario. The models achieved high accuracy and performed well, particularly with Drowsy Recall. 
 
 ### Results
 
@@ -69,7 +69,7 @@ Several MobileNetV3 models were trained and evaluated by the process of transfer
 ## Screenshots
 
 ## Architecture & Technology Stack
-The mobile application follows a combination of layered architecture and MVVM to separate responsibilities between the presentation, business logic, data, and Firebase service layers.
+The mobile application uses layered architecture with MVVM to separate responsibilities among the presentation, business logic, data, and Firebase service layers.
 * **Presentation Layer**: Interfaces built with Flutter (stateful and stateless widgets) for user interactions.
 * **BLoC / View Model**: Manages application state and UI updates, acting as the bridge between data and UI, like updating UI based on drowsiness predictions
 * **Repository Layer**: Acts as an abstraction between the application logic and data sources.
@@ -84,8 +84,8 @@ Following the layered-architecture approach supports the system, making it more 
 * State Management - Business Logic of Component (BLoC, Events and States)
   
 ### Machine Learning & Computer Vision
-* Python: Primary programming language for data preprocessing, model training and evaluation
-* TensorFlow / TensorFlow Lite: Real-time, lightweight drowsiness detection which allows the model to run inference on an edge device
+* Python: Primary programming language for data preprocessing, model training, and evaluation
+* TensorFlow / TensorFlow Lite: Real-time, lightweight drowsiness detection that allows the model to run inference on an edge device
 
 ### Backend & Cloud Services
 * Firebase Authentication: Phone number and OTP authentication
@@ -94,10 +94,12 @@ Following the layered-architecture approach supports the system, making it more 
 ### Location & Navigation
 * Geolocation: Obtains the driver's current location (latitude and longitude)
 * Overpass API: Provides information about suitable stopping locations
-* Map & Routing Services like GoogleMaps and AppleMaps: Supports route calculation and navigation toward recommended rest stops
+* Map & Routing Services like Google Maps and Apple Maps: Supports route calculation and navigation toward recommended rest stops
 
 ### Version Control
 * CI/CD pipeline: GitHub
+
+This stack enables the application to combine real-time drowsiness detection, location-aware safety recommendations, cloud-based data management, and trip/fatigue monitoring within a single mobile platform.
 
 ## CI/CD Pipeline
 Branch strategy:
