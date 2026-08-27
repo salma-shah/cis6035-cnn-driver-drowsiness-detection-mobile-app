@@ -1,27 +1,23 @@
 import 'dart:developer';
 
 import 'package:sleepy_driver/alarm_system/services/audio_service.dart';
-import 'package:sleepy_driver/alarm_system/services/notif_service.dart';
 import 'package:sleepy_driver/alarm_system/services/vibration_service.dart';
 import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 
 class AlarmFacade {
   final AudioService audioService;
   final VibrationService vibrationService;
-  final NotifService notificationService;
   bool alarmActive = false;
   bool get isAlarmActive => alarmActive;
 
   AlarmFacade({
     required this.audioService,
-    required this.vibrationService,
-    required this.notificationService,
+    required this.vibrationService
   });
 
   Future<void> initialize() async {
     await audioService.initialize();
     await vibrationService.initialize();
-    await notificationService.initialize();
   }
 
   Future<void> triggerAlarm({
@@ -45,7 +41,7 @@ class AlarmFacade {
           break;
 
         case FatigueSeverity.mild:
-          await audioService.playMild();
+        //  await audioService.playMild();
           await vibrationService.mild();
           break;
 
@@ -78,9 +74,6 @@ Future<void> stop() async {
   log('STOPPING VIBRATION');
   await vibrationService.stop();
 
-  log('CANCELLING NOTIFICATION');
-  await notificationService.cancelAll();
-
   log('ALARM COMPLETELY STOPPED');
 }
   Future<void> dispose() async {
@@ -88,6 +81,5 @@ Future<void> stop() async {
 
     await audioService.dispose();
     await vibrationService.dispose();
-    await notificationService.dispose();
   }
 }
