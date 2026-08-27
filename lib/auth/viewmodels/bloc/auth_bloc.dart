@@ -12,8 +12,9 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthRepo authRepo = AuthRepo();
-  AuthBloc() : super(AuthInitialState()) {
+  final AuthRepo authRepo;
+  AuthBloc({
+    required this.authRepo}) : super(AuthInitialState()) {
     on<AuthEvent>((event, emit) {});
 
      on<OtpSentEvent>((event, emit) async {

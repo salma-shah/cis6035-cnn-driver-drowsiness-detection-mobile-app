@@ -1,9 +1,10 @@
 import 'package:sleepy_driver/auth/models/user.dart';
 import 'package:sleepy_driver/auth/services/auth_service.dart';
-import 'package:sleepy_driver/auth/services/auth_service_impl.dart';
 
 class AuthRepo {
-  final AuthServiceInterface authService = AuthServiceImpl();
+  final AuthServiceInterface authService;
+  
+  AuthRepo({required this.authService});
 
   Future<bool> phoneExists(String phone) async {
     return await authService.phoneExists(phone);
