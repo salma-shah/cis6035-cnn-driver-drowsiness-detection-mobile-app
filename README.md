@@ -3,8 +3,6 @@
 
 A driver drowsiness-detection mobile application that serves as a support tool for drivers on long journeys during early mornings and late nights. Built with Flutter and Firebase, and following a combination of MVVM and layered architectures, this application is designed to detect drowsiness in drivers under varying lighting conditions to improve road safety. 
 
-## Demonstration: 
-
 ## About
 Around the world, fatigue accounts for 21% of car accidents. They are destructive and endanger not only their own lives but also the lives of others on the road, especially when carrying passengers between destinations. This is exacerbated at nighttime and on rural roadways, which are often poorly lit. In Sri Lanka itself, bus & tuk-tuk drivers and logistics companies’ truck drivers face a serious risk. Other similar applications require a well-lit environment and rely narrowly on eye movement to monitor fatigue. User-appearance-wise, it is catered to the global population; people with different appearances/skin tones are underrepresented. 
 
@@ -32,10 +30,14 @@ The Unified Process was followed to build this project; it saves cost and time, 
 * Safe session handling and destruction with the logout feature
 
 ### Drowsiness Detection
+* MobileNetV3-based CNN classification with facial landmark analysis to detect driver fatigue in real time.
+* Eye Aspect Ratio, Mouth Aspect Ratio, and head-pitch-based nodding are calibrated with temporal thresholds to distinguish sustained fatigue from isolated facial movements.
+* An adaptive calibration process personalizes EAR and MAR thresholds for each driver
 
 ### Alarm System
-
-
+* Drowsiness is classified based on severity levels: Active, Mild, Moderate, and Severe
+* Severity-based audio and vibration alarms provide immediate feedback, along with specific alert screens
+* Drowsiness alerts are also recorded against the active trip for later review.
 
 ### Recommendations & Nearby Rest Stops
 * Identifies nearby suitable rest stops like restaurants, cafes, fuel stations, and designated parking spaces when driver fatigue is detected, through the use of Overpass API
@@ -64,9 +66,14 @@ Data from the Driver Drowsiness Dataset (ismailnasri20),	NTHU Dataset (samymesba
 Several MobileNetV3 models were trained and evaluated using transfer learning and fine-tuning with ImageNet weights. First, the backbone layers were frozen, then trained on preprocessed, augmented data, before the backbone layers were unfrozen. The model was compiled and trained again, then validated and evaluated on unseen test data. This makes it highly efficient and robust to our scenario. The models achieved high accuracy and performed well, particularly with Drowsy Recall. 
 
 ### Results
+The selected MobileNetV3 model produced 96.99% Accuracy, 98.19% Precision, 97.15% Recall, and 97.66% F1-Score. The model correctly classified 10,016 of 10,310 drowsy samples, with 294 false negatives and 185 false positives. The high Drowsy recall was particularly important for the safety-oriented application, as it reduces the likelihood of genuine drowsiness being missed, and the low number of false classifications also suggests false alarms are less likely. This model was converted into TFLite format for lightweight usage on the mobile device, then integated into the Flutter application.
 
 ## Software Design Patterns
-
+* **Facade Pattern:** Applied to the alarm system; AlarmFacade provides a simple interface for controlling multiple underlying services such as audio and vibration. This reduces coupling and simplifies interaction with the alarm subsystem.
+* **BLoC Pattern:** Applied to managing application and UI state through events and states. This separates presentation from business logic and is suitable for asynchronous processes such as camera processing, drowsiness inference, alarms, trip management, and cloud communication. This improves maintainability and provides predictable state transitions.
+* **Observer Pattern:** Applied through the BLoC state-management mechanism, where UI components listen for state changes and react when new states are emitted. This allows changes such as drowsiness detection, alarm activation, trip updates, and break status to be moved to the relevant UI components without the BLoC directly controlling the UI, reducing coupling between components.
+* *Dependency Injection:** Applied by supplying repositories, services, and other dependencies through constructors rather than creating them inside the classes that use them. This reduces tight coupling and allows different implementations, such as test or mock services, to be substituted easily.
+ 
 ## Screenshots
 
 ## Architecture & Technology Stack
