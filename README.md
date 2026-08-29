@@ -1,4 +1,5 @@
-# SleepyDriver; CNN-based Mobile Application for Real-Time Driver Fatigue Detection across Varying Light Conditions 😴💤🚗
+# SleepyDriver (v1.11.6) 😴💤🚗
+## A CNN-based Mobile Application for Real-Time Driver Fatigue Detection across Varying Light Conditions 
 
 A driver drowsiness detection mobile application that acts as a support tool for drivers who drive long journeys during early mornings and late nights. Built with Flutter and Firebase, following a combination of MVVM and layered architecture, this application is designed to detect drowsiness in drivers across varying light conditions to improve road safety. 
 
