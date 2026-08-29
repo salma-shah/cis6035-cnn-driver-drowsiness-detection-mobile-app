@@ -6,15 +6,12 @@ import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 class DrowsinessAnalysisResult {
   final bool isDrowsy;
   final FatigueSeverity severity;
-
   final bool cnnDrowsy;
   final bool eyesClosed;
   final bool yawning;
-
   final Duration eyeClosureDuration;
   final Duration mouthOpenDuration;
   final Duration drowsinessDuration;
-
   final double headPitch;
   final bool headNodding;
   final int recentHeadNodCount;
@@ -38,23 +35,18 @@ class DrowsinessAnalyzer {
   final double cnnThreshold;
   double earThreshold;
   double marThreshold;
-
   final Duration requiredEyeClosureDuration;
   final Duration requiredYawningDuration;
   final Duration requiredDrowsinessDuration;
   final double headNodAngleThreshold;
   final Duration headNodDuration;
   final Duration headNodWindow;
-
   DateTime? eyeClosureStart;
   DateTime? mouthOpenStart;
   DateTime? drowsinessStart;
   DateTime? lastTimestamp;
-
   double? previousHeadPitch;
-
   DateTime? headNodDownStart;
-
   bool nodDownDetected = false;
 
   /// stores only nods occurred recently
@@ -169,19 +161,14 @@ class DrowsinessAnalyzer {
     final yawning =
         sustainedMouthOpening;
 
-    final headNodding =
-        headPitch != null
-            ? detectHeadNodding(
-                headPitch: headPitch,
-                now: now,
-              )
-            : false;
+    final headNodding = headPitch != null ? detectHeadNodding(headPitch: headPitch,now: now): false;
 
     _removeExpiredHeadNods(now);
     final recentHeadNodCount =
         headNodTimestamps.length;
 
     // combining all facial analysis and model probability to create evidence to decide whether drowsy or not
+    // final decision
     final drowsinessEvidence =
         cnnDrowsy &&
         (
@@ -211,29 +198,14 @@ class DrowsinessAnalyzer {
     // calculating the severity
     final severity =
         calculateSeverity(
-      cnnProbability:
-          cnnProbability,
-
-      eyesClosed:
-          sustainedEyeClosure,
-
-      yawning:
-          yawning,
-
-      headNodding:
-          headNodding,
-
-      recentHeadNodCount:
-          recentHeadNodCount,
-
-      eyeClosureDuration:
-          eyeClosureDuration,
-
-      drowsinessDuration:
-          drowsinessDuration,
-
-      isDrowsy:
-          isDrowsy,
+      cnnProbability:cnnProbability,
+      eyesClosed: sustainedEyeClosure,
+      yawning:  yawning,         
+      headNodding:  headNodding,
+      recentHeadNodCount:   recentHeadNodCount,    
+      eyeClosureDuration:   eyeClosureDuration,
+      drowsinessDuration:      drowsinessDuration,
+      isDrowsy:    isDrowsy      
     );
 
     log(

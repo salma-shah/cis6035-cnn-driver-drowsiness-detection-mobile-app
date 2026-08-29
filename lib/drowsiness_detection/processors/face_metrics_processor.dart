@@ -122,7 +122,6 @@ class FaceMetricsProcessor {
   }
 
   // head pitch
-
  double calculateHeadPitch(
   List<Landmark> landmarks,
 ) {

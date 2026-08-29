@@ -17,7 +17,6 @@ FatigueSeverity calculateSeverity({
 
   // considered severe if  high CNN confidence + prolonged eye closure / mouth closure
   // and head nodding
-
   if (
     (
       cnnProbability >= 0.85 &&
