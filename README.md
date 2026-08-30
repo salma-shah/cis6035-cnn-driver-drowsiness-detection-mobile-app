@@ -15,7 +15,6 @@ The Unified Process was followed to build this project; it saves cost and time, 
 * **Target audience:** Optimized for both urban & rural users and prioritizes local relevance, minimal user interaction, and driver safety.
 * **Technology**: Flutter, Firebase & Firestore, BLOC state management, GitHub, MVVM architecture (Model-View-ViewModel)
 
-
 ## Key Features
 ### Secure Authentication 
 * Secure login using phone number and OTP verification
@@ -75,6 +74,19 @@ The selected MobileNetV3 model produced 96.99% Accuracy, 98.19% Precision, 97.15
 * *Dependency Injection:** Applied by supplying repositories, services, and other dependencies through constructors rather than creating them inside the classes that use them. This reduces tight coupling and allows different implementations, such as test or mock services, to be substituted easily.
  
 ## Screenshots
+<img width="350" height="800" alt="splash" src="https://github.com/user-attachments/assets/ef8fac5b-108b-4d0c-9ac1-0d726a68c216" />
+<img width="350" height="800" alt="login" src="https://github.com/user-attachments/assets/1d996c39-8d42-4622-9e42-b23ac80cc68c" />
+<img width="350" height="800" alt="register" src="https://github.com/user-attachments/assets/77f669a7-5c66-487f-9a2c-36607f1b9a62" />
+<img width="350" height="800" alt="profile" src="https://github.com/user-attachments/assets/ff836772-910c-4075-843e-f5531291ffd3" />
+<img width="350" height="800" alt="dashboard" src="https://github.com/user-attachments/assets/c885f682-f580-45fd-8854-6ace6aa8cbad" />
+<img width="350" height="800" alt="safety" src="https://github.com/user-attachments/assets/7bd7a582-a222-4366-a163-12fcac515438" />
+<img width="350" height="800" alt="des" src="https://github.com/user-attachments/assets/863ecdda-a9bb-4588-8a3d-fa5754606daa" />
+<img width="350" height="800" alt="mild" src="https://github.com/user-attachments/assets/adfe8311-5e75-4cb5-bca9-ed5f7d26552b" />
+<img width="350" height="800" alt="mod" src="https://github.com/user-attachments/assets/47e5e88b-a880-47ca-96ba-74e28e5660af" />
+<img width="350" height="800" alt="severe" src="https://github.com/user-attachments/assets/d177647a-940e-40b0-a4be-7e5e5deb102c" />
+<img width="350" height="800" alt="triphistory" src="https://github.com/user-attachments/assets/3ac50a52-4959-447a-bb80-950b9af34b2e" />
+<img width="350" height="800" alt="pg1" src="https://github.com/user-attachments/assets/cbf79f44-a1d7-462e-a1a1-08a01759c89d" />
+<img width="350" height="800" alt="pg5" src="https://github.com/user-attachments/assets/a1719466-f21b-43ac-b992-c82b1f867b43" />
 
 ## Architecture & Technology Stack
 The mobile application uses layered architecture with MVVM to separate responsibilities among the presentation, business logic, data, and Firebase service layers.
@@ -109,6 +121,50 @@ Following the layered-architecture approach supports the system, making it more 
 
 This stack enables the application to combine real-time drowsiness detection, location-aware safety recommendations, cloud-based data management, and trip/fatigue monitoring within a single mobile platform.
 
+## Getting Started
+### Prerequisites
+
+Before running SleepyDriver, ensure you have the following installed:
+
+- Flutter SDK
+- Android Studio
+- Android device or emulator
+- A configured Firebase project
+
+### How to install
+#### Option 1: Download the ZIP file
+
+1. Click **Code** at the top of the repository
+2. Click **Download ZIP**
+3. Once the repository is downloaded, extract the ZIP file to access the repository's files
+
+#### Option 2: Clone the repository
+1. Click **Code** at the top of the repository
+2. Copy the URL from the HTTPS tab
+3. Open your terminal and change the working directory to your preferred location
+4. Run the clone command below:
+```bash
+git clone https://github.com/salma-shah/cis6035-cnn-driver-drowsiness-detection-mobile-app
+```
+5. Install Flutter dependencies
+```bash
+flutter pub get
+```
+
+#### After download
+1. Configure Firebase for the project and ensure the required services are enabled:
+
+* Firebase Authentication
+* Cloud Firestore
+* Cloud Functions
+
+2. Connect an Android device or start an emulator, then run:
+```bash
+flutter run
+```
+For a physical device, ensure that camera and location permissions are enabled.
+Note: SleepyDriver is currently developed and tested primarily on Android. iOS support is planned as a future enhancement.
+
 ## CI/CD Pipeline
 Branch strategy:
 * ```development``` : Development environment for new features
@@ -129,10 +185,11 @@ Commit-History: Commits to ```development``` branch history can be viewed [here]
 Following and integrating into the CI/CD pipeline ensures that only safely tested and reviewed code is delivered to the production environment, with minimal disruptions that could cause damage. This is crucial considering the safety-critical nature of SleepyDriver. 
 
 ## Version
-Version: SleepyDriver v1.11.6
-Last updated: 31st August 2025
+* Version: SleepyDriver v1.11.6
+* Last updated: 31st August 2025
 
 ## Lessons Learned
+
 
 ## Contribution
 If you would like to contribute to this repository:
