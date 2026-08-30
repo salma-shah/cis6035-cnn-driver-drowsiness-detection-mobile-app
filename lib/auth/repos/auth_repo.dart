@@ -1,0 +1,38 @@
+import 'package:sleepy_driver/auth/models/user.dart';
+import 'package:sleepy_driver/auth/services/auth_service.dart';
+
+class AuthRepo {
+  final AuthServiceInterface authService;
+  
+  AuthRepo({required this.authService});
+
+  Future<bool> phoneExists(String phone) async {
+    return await authService.phoneExists(phone);
+  }
+
+  Future<String> sendOtp(String phoneNum) async {
+    return await authService.sendOtp(phoneNum);
+  }
+
+  Future<UserModel> verifyOtp(String verificationId, String otp, String? name) async 
+  {
+    final firebaseUser =
+        await authService.verifyOtp(verificationId, otp, name);
+    return firebaseUser;
+  }
+
+  Future<void> deleteUserAccount() async
+  {
+    return await authService.deleteUserAccount();
+  }
+
+   Future<void> logOut() async
+  {
+    return await authService.logOut();
+  }
+
+// checking if user is logged in
+bool isUserLoggedIn() {
+  return authService.currentUser != null;
+}
+}
