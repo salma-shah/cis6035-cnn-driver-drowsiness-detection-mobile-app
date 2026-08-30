@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "995471118713",
+    "project_id": "sleepydriver-583ff",
+    "storage_bucket": "sleepydriver-583ff.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995471118713:android:e7ac4819a0b93e8a3c5fa8",
+        "android_client_info": {
+          "package_name": "com.example.sleepy_driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAM0NXSoVRrxwyu_aTHfZ5lpgDvG8oSnJk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
