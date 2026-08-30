@@ -1,0 +1,106 @@
+import 'dart:async';
+import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sleepy_driver/auth/viewmodels/bloc/auth_bloc.dart';
+import 'package:sleepy_driver/routing/route_constants.dart';
+
+class SplashPage extends StatefulWidget {
+  const SplashPage({super.key});
+
+  @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+// using timer
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthBloc>().add(
+        CheckAuthStatusEvent(),);  
+
+// navigating to the next page after the 3s timer ends
+    //_timer = Timer(const Duration(seconds: 3), () {});
+      log('SPLASH -> LOGIN');  
+      
+      // context.goNamed(RouteConstants.login);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); 
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthAuthenticatedState)
+          {
+            _timer = Timer(const Duration(seconds: 3), () {
+            if (mounted){
+             log('SPLASH -> HOME');
+            context.goNamed(RouteConstants.home);
+            }
+          }
+          );
+          }
+          if (state is AuthUnauthenticatedState)
+          {
+            _timer = Timer(const Duration(seconds: 3), () {
+            if (mounted){
+             log('SPLASH -> LOg');
+            context.goNamed(RouteConstants.login);
+            }
+          }
+          );
+          }
+        },
+
+      
+      child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: 100),
+                _buildHeader(context),
+                _buildBody()
+            ],
+          ),
+        ),
+    ));
+  }
+}
+
+Widget _buildHeader(BuildContext context) {
+  return Container(
+    alignment: Alignment.center,
+        child: Text(
+          'SleepyDriver',
+          style: TextStyle(
+            fontSize: 38,
+            fontWeight: FontWeight.bold,
+          //  fontFamily: 'Montserrat',
+            color: Theme.of(context).primaryColor
+          ),
+        ),
+  );
+}
+
+Widget _buildBody() {
+   return Expanded(
+  //  width: double.infinity,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child:
+              Image.asset('assets/images/img_landing_pg.jpg',
+              width: double.infinity, fit: BoxFit.cover),
+          ),
+        );
+}
