@@ -6,7 +6,7 @@ A driver drowsiness-detection mobile application that serves as a support tool f
 ## About
 Around the world, fatigue accounts for 21% of car accidents. They are destructive and endanger not only their own lives but also the lives of others on the road, especially when carrying passengers between destinations. This is exacerbated at nighttime and on rural roadways, which are often poorly lit. In Sri Lanka itself, bus & tuk-tuk drivers and logistics companies’ truck drivers face a serious risk. Other similar applications require a well-lit environment and rely narrowly on eye movement to monitor fatigue. User-appearance-wise, it is catered to the global population; people with different appearances/skin tones are underrepresented. 
 
-Therefore, SleepyDriver detects fatigue across **varying light environments**.** From real-time monitoring to an alert system and recommended solutions, this application solves a deadly issue and improves safety by refining a pre-trained AI model.
+Therefore, SleepyDriver detects fatigue across **varying light environments**.** From real-time monitoring to an alert system and recommended solutions, this application solves a deadly issue and improves safety by refining a pre-trained AI model. 
 
 The Unified Process was followed to build this project; it saves cost and time, and prioritizes a flexible, incremental, and iterative approach.
 
@@ -71,7 +71,7 @@ The selected MobileNetV3 model produced 96.99% Accuracy, 98.19% Precision, 97.15
 * **Facade Pattern:** Applied to the alarm system; AlarmFacade provides a simple interface for controlling multiple underlying services such as audio and vibration. This reduces coupling and simplifies interaction with the alarm subsystem.
 * **BLoC Pattern:** Applied to managing application and UI state through events and states. This separates presentation from business logic and is suitable for asynchronous processes such as camera processing, drowsiness inference, alarms, trip management, and cloud communication. This improves maintainability and provides predictable state transitions.
 * **Observer Pattern:** Applied through the BLoC state-management mechanism, where UI components listen for state changes and react when new states are emitted. This allows changes such as drowsiness detection, alarm activation, trip updates, and break status to be moved to the relevant UI components without the BLoC directly controlling the UI, reducing coupling between components.
-* *Dependency Injection:** Applied by supplying repositories, services, and other dependencies through constructors rather than creating them inside the classes that use them. This reduces tight coupling and allows different implementations, such as test or mock services, to be substituted easily.
+* **Dependency Injection:** Applied by supplying repositories, services, and other dependencies through constructors rather than creating them inside the classes that use them. This reduces tight coupling and allows different implementations, such as test or mock services, to be substituted easily.
  
 ## Screenshots
 <img width="350" height="800" alt="splash" src="https://github.com/user-attachments/assets/ef8fac5b-108b-4d0c-9ac1-0d726a68c216" />
@@ -123,9 +123,7 @@ This stack enables the application to combine real-time drowsiness detection, lo
 
 ## Getting Started
 ### Prerequisites
-
 Before running SleepyDriver, ensure you have the following installed:
-
 - Flutter SDK
 - Android Studio
 - Android device or emulator
@@ -189,7 +187,10 @@ Following and integrating into the CI/CD pipeline ensures that only safely teste
 * Last updated: 31st August 2025
 
 ## Lessons Learned
-
+* One of the main lessons from developing and training a model was that accuracy alone is not a sufficient predictor of drowsiness alone. Metrics like Precision, F1-Score, and Recall are equally important, especially because missing a drowsy driver is more dangerous than a false alarm. This demonstrated how crucial it is for the model design itself to meet the application’s requirements. 
+* Combining layered architecture with the MVVM approach was practical, allowing for easy bug tracing and delegating responsibilities across layers. It was especially beneficial when UI updates needed to be frequent, like updating the screen for every drowsy prediction received.
+* The project itself was challenging and intuitive, going beyond a basic prediction model taught during the module. It gave me lots of knowledge regarding how to clean and process image data, which is quite different from tabular data, and to fine-tune a pretrained model. While challenges arose with integrating the model into the Flutter application and ensuring the application does not crash, solving them allowed me to learn beyond the scope of this project. I hope to utilize this knowledge and build more computer-vision-based applications in the future.
+* The most important lesson of them all would have to be the realization is that with the knowledge I gained from my BSc in Software Engineering, I can apply it to attempt to solve issues people around me actually face, and that other developers should too. As the final project of my BSc in Software Engineering, SleepyDriver allowed me to apply my skills and learning to produce a fully functional mobile application that can actively work towards solving a prevalent issue, if utilized correctly, rather than just another academic project.
 
 ## Contribution
 If you would like to contribute to this repository:
