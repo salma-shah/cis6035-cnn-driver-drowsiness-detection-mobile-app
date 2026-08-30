@@ -1,4 +1,4 @@
-# SleepyDriver (v1.11.6) 😴💤🚗
+# SleepyDriver (v1.11.7) 😴💤🚗
 ## A CNN-based Mobile Application for Real-Time Driver Fatigue Detection across Varying Light Conditions 
 
 A driver drowsiness-detection mobile application that serves as a support tool for drivers on long journeys during early mornings and late nights. Built with Flutter and Firebase, and following a combination of MVVM and layered architectures, this application is designed to detect drowsiness in drivers under varying lighting conditions to improve road safety. 
@@ -183,7 +183,7 @@ Commit-History: Commits to ```development``` branch history can be viewed [here]
 Following and integrating into the CI/CD pipeline ensures that only safely tested and reviewed code is delivered to the production environment, with minimal disruptions that could cause damage. This is crucial considering the safety-critical nature of SleepyDriver. 
 
 ## Version
-* Version: SleepyDriver v1.11.6
+* Version: SleepyDriver v1.11.7
 * Last updated: 31st August 2025
 
 ## Lessons Learned
