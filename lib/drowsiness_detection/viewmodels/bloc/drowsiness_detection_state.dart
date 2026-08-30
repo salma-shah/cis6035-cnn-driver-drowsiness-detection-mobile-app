@@ -1,3 +1,5 @@
+//import 'dart:typed_data';
+
 import 'package:camera/camera.dart';
 import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 
@@ -31,6 +33,9 @@ class DrowsinessState {
   final int totalAlerts;
   final FatigueSeverity maxSeverity;
 
+  //final Uint8List? debugImage;
+
+
   const DrowsinessState({
     this.status = DrowsinessStatus.initial,
     this.probability = 0.0,
@@ -49,6 +54,8 @@ class DrowsinessState {
     this.totalDrowsinessEvents = 0,
     this.totalAlerts = 0,
     this.maxSeverity = FatigueSeverity.normal,
+   // this.debugImage,
+
   });
 
   DrowsinessState copyWith({
@@ -76,6 +83,8 @@ class DrowsinessState {
     int? totalDrowsinessEvents,
     int? totalAlerts,
     FatigueSeverity? maxSeverity,
+
+   // Uint8List? debugImage,
   }) {
     return DrowsinessState(
       status: status ?? this.status,
@@ -122,7 +131,9 @@ class DrowsinessState {
       maxSeverity:
           maxSeverity ?? this.maxSeverity,
 
-      onBreak: onBreak ?? this.onBreak
+      onBreak: onBreak ?? this.onBreak,
+      //  debugImage:
+      //     debugImage ?? this.debugImage,
     );
   }
 

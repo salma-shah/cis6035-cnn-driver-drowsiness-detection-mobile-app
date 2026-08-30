@@ -295,6 +295,7 @@ if (severityRank(result.severity) >
         totalDrowsinessEvents:updatedDrowsinessEvents,
         maxSeverity: updatedMaxSeverity,
         clearError: true,
+     //   debugImage: result.debugImage,
       ),
     );
 
@@ -357,7 +358,7 @@ emit(
           cnnProbability:result.probability,
           ear: result.ear,
           mar: result.mar,
-          acknowledged: false,
+          acknowledged: false
         );
 
         await alertRepository.createAlert(

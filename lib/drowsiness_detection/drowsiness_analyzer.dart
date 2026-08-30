@@ -1,4 +1,5 @@
 import 'dart:developer';
+// import 'dart:typed_data';
 
 import 'package:sleepy_driver/drowsiness_detection/calculate_severity.dart';
 import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
@@ -15,6 +16,7 @@ class DrowsinessAnalysisResult {
   final double headPitch;
   final bool headNodding;
   final int recentHeadNodCount;
+  //final Uint8List? debugImage;
 
   const DrowsinessAnalysisResult({
     required this.isDrowsy,
@@ -28,6 +30,7 @@ class DrowsinessAnalysisResult {
     required this.headPitch,
     required this.headNodding,
     required this.recentHeadNodCount,
+   //  this.debugImage,
   });
 }
 

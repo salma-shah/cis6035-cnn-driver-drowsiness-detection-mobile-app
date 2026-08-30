@@ -1,3 +1,5 @@
+// import 'dart:typed_data';
+
 import 'package:sleepy_driver/drowsiness_detection/fatigue_severity.dart';
 
 class DrowsinessResult {
@@ -10,7 +12,7 @@ class DrowsinessResult {
 
   final FatigueSeverity severity;
 
- // final Uint8List? debugImage;
+// final Uint8List? debugImage;
 
   const DrowsinessResult({
     required this.probability,
@@ -20,7 +22,7 @@ class DrowsinessResult {
     required this.isDrowsy,
     required this.label,
     required this.severity,
-  //  required this.debugImage
+ //  required this.debugImage
   });
 
 }

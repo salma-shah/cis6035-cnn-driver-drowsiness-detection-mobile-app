@@ -220,6 +220,10 @@ class DrowsinessDetectionRepo {
       headPitch: headPitch,
       timestamp: DateTime.now()
     );
+//     final processed =
+//     imageProcessor.processFrameForDebug(
+//   cameraImage,
+// );
 
     log(
       'CNN drowsy: '
@@ -242,11 +246,6 @@ class DrowsinessDetectionRepo {
       '${analysis.isDrowsy ? "DROWSY" : "NON-DROWSY"}',
     );
 
-// final processed =
-//     imageProcessor.processFrameForDebug(
-//   cameraImage,
-// );
-
     final result =
         DrowsinessResult(
       probability: probability,
@@ -257,8 +256,8 @@ class DrowsinessDetectionRepo {
               ? 'Drowsy'
               : 'Non Drowsy',
       severity: analysis.severity,
-      drowsinessDuration: analysis.drowsinessDuration
-    //  debugImage: processed.debugImage
+      drowsinessDuration: analysis.drowsinessDuration,
+    // debugImage: processed.debugImage
     );
     onPrediction(result);
 
