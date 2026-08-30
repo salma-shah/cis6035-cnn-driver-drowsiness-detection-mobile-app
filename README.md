@@ -173,7 +173,7 @@ Branch strategy:
 
 Version-control techniques:
 * Merging: Once a feature was fully complete and working, its branch was merged into ```development``` branch before deletion
-* Commits & Pushes: Following Unified Process, small incremental commits were pushed to the ```development``` branch, serving a single purpose and making it easier to track
+* Commits & Pushes: Following Agile methodology, small incremental commits were pushed to the ```development``` branch, serving a single purpose and making it easier to track
 * Pull Requests (PR): When pushing commits to ```master```, a pull request was created to review before selectively integrating changes
 * Deployment: After thorough testing, code is pushed from ```qa``` branch to ```master``` branch
 
@@ -185,7 +185,7 @@ Following and integrating into the CI/CD pipeline ensures that only safely teste
 
 ## Version
 * Version: SleepyDriver v1.11.7
-* Last updated: 31st August 2025
+* Last updated: 30th August 2025
 
 ## Lessons Learned
 * One of the main lessons from developing and training a model was that accuracy alone is not a sufficient predictor of drowsiness alone. Metrics like Precision, F1-Score, and Recall are equally important, especially because missing a drowsy driver is more dangerous than a false alarm. This demonstrated how crucial it is for the model design itself to meet the application’s requirements. 
