@@ -6,7 +6,7 @@ A driver drowsiness-detection mobile application that serves as a support tool f
 ## About
 Around the world, fatigue accounts for 21% of car accidents. They are destructive and endanger not only their own lives but also the lives of others on the road, especially when carrying passengers between destinations. This is exacerbated at nighttime and on rural roadways, which are often poorly lit. In Sri Lanka itself, bus & tuk-tuk drivers and logistics companies’ truck drivers face a serious risk. Other similar applications require a well-lit environment and rely narrowly on eye movement to monitor fatigue. User-appearance-wise, it is catered to the global population; people with different appearances/skin tones are underrepresented. 
 
-Therefore, SleepyDriver detects fatigue across **varying light environments**.** From real-time monitoring to an alert system and recommended solutions, this application solves a deadly issue and improves safety by refining a pre-trained AI model. 
+Therefore, SleepyDriver detects fatigue across **varying light environments.** From real-time monitoring to an alert system and recommended solutions, this application solves a deadly issue and improves safety by refining a pre-trained AI model. 
 
 Agile methodology was followed to build this project; it saves cost and time, and prioritizes a flexible, incremental, and iterative approach.
 
