@@ -8,7 +8,7 @@ Around the world, fatigue accounts for 21% of car accidents. They are destructiv
 
 Therefore, SleepyDriver detects fatigue across **varying light environments**.** From real-time monitoring to an alert system and recommended solutions, this application solves a deadly issue and improves safety by refining a pre-trained AI model. 
 
-The Unified Process was followed to build this project; it saves cost and time, and prioritizes a flexible, incremental, and iterative approach.
+Agile methodology was followed to build this project; it saves cost and time, and prioritizes a flexible, incremental, and iterative approach.
 
 * **Problem:** Driver drowsiness results in a staggering number of accidents, especially in dark environments and rural areas. 
 * **Objectives**: Detect driver fatigue in low-lit/dim light environments (eye blinking, yawning, head drooping), in people of different appearances, and train a CNN-based drowsiness detection model
