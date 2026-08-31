@@ -177,7 +177,7 @@ Version-control techniques:
 * Pull Requests (PR): When pushing commits to ```master```, a pull request was created to review before selectively integrating changes
 * Deployment: After thorough testing, code is pushed from ```qa``` branch to ```master``` branch
 
-Commit-History: Commits to ```development``` branch history can be viewed [here](https://github.com/salma-shah/cis6003-hotel-management-system/commits/development/)
+Commit-History: Commits to ```development``` branch history can be viewed [here](https://github.com/salma-shah/cis6035-cnn-driver-drowsiness-detection-mobile-app/commits/development/)
 
 ```master``` branch holds only the 'shippable' code; therefore, only pull requests were made to it, following real-world best practices. 
 
